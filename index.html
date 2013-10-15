@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Prototype</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.5.5.min.js"></script>
+
+<style>
+#container{
+  border:solid 1px #ccc;
+  margin-top: 10px;
+  width:300px;
+  height:300px;
+}
+</style>        
+<script>
+$(function(){
+
+    var stage = new Kinetic.Stage({
+        container: 'container',
+        width:300,
+        height: 300
+    });
+    var layer = new Kinetic.Layer();
+    stage.add(layer);
+
+    var colors=['red','green','blue','orange'];
+
+    var lines=[];
+
+    var points=[];
+    points.push({x:125,y:50});
+    points.push({x:75,y:75});
+    points.push({x:200,y:200});
+    points.push({x:275,y:100});
+
+    for(var i=0;i<points.length-1;i++){
+        var p1=points[i];
+        var p2=points[i+1];
+        addSegment(i,p1.x,p1.y,p2.x,p2.y,colors[i]);
+    }
+
+    layer.draw();
+
+
+    function addSegment(i,x1,y1,x2,y2,color){
+
+        var line = new Kinetic.Line({
+            points: [x1,y1,x2,y2],
+            stroke:color,
+            strokeWidth: 25,
+            lineCap:"round",
+            lineJoin:"round",
+            draggable:true
+        });
+        line.index=i;
+        line.on("dragend",function(){
+
+            // get the amount of xy drag
+            var i=this.index;
+            var dx=this.getX();
+            var dy=this.getY();
+
+            // update the points array
+            var p0=points[i];
+            var p1=points[i+1];
+            p0.x+=dx;
+            p0.y+=dy;
+            p1.x+=dx;
+            p1.y+=dy;
+
+            // reset the dragged line
+            this.setPosition(0,0);
+            this.setPoints([p0.x,p0.y,p1.x,p1.y]);
+
+            layer.draw();
+        });
+        line.on("dragmove",function(){
+
+            // get the amount of xy drag
+            var i=this.index;
+            var dx=this.getX();
+            var dy=this.getY();
+
+            // adjust the ending position of the previous line
+            if(i>0){
+                var line=lines[i-1];
+                var pts=line.getPoints();
+                pts[1].x=points[i].x+dx;
+                pts[1].y=points[i].y+dy;
+                line.setPoints(pts);
+            }
+
+            // adjust the starting position of the next line
+            if(i<lines.length-1){
+                var line=lines[i+1];
+                var pts=line.getPoints();
+                pts[0].x=points[i+1].x+dx;
+                pts[0].y=points[i+1].y+dy;
+                line.setPoints(pts);
+            }
+
+            layer.draw();
+        });
+        layer.add(line);
+        lines.push(line);
+    }
+
+
+}); // end $(function(){});
+
+</script>       
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
