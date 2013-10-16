@@ -17,6 +17,24 @@
 <script>
 $(function(){
 
+	var test = true;
+
+
+	var stickParts = [
+	{a:[2,0],b:[2,1],lbl:"head"},
+	{a:[1,1],b:[2,1],lbl:"rt shldr"},
+	{a:[2,1],b:[3,1],lbl:"lt shldr"},
+	{a:[0,1],b:[1,1],lbl:"rt uppr arm"},
+	{a:[3,1],b:[4,1],lbl:"lt uppr arm"},
+	{a:[0,1],b:[0,2],lbl:"rt lwr arm"},
+	{a:[4,1],b:[4,2],lbl:"lt lwr arm"},
+	{a:[2,1],b:[2,3],lbl:"torso"},
+	{a:[2,3],b:[1,4],lbl:"rt uppr leg"},
+	{a:[2,3],b:[3,4],lbl:"lt uppr leg"},
+	{a:[1,4],b:[1,6],lbl:"rt lwr leg"},
+	{a:[3,4],b:[3,6],lbl:"lt lwr leg"}];
+	
+	
     var stage = new Kinetic.Stage({
         container: 'container',
         width:300,
@@ -29,19 +47,35 @@ $(function(){
 
     var lines=[];
 
-    var points=[];
-    points.push({x:125,y:50});
-    points.push({x:75,y:75});
-    points.push({x:200,y:200});
-    points.push({x:275,y:100});
-
-    for(var i=0;i<points.length-1;i++){
-        var p1=points[i];
-        var p2=points[i+1];
-        addSegment(i,p1.x,p1.y,p2.x,p2.y,colors[i]);
+   	var points=[];
+    
+    
+    if(test){
+    	drawTest();
+    }else{
+    	drawPoser();
     }
-
+    
     layer.draw();
+    
+    function drawTest(){
+    
+    	 
+    
+		points.push({x:125,y:50});
+		points.push({x:75,y:75});
+		points.push({x:200,y:200});
+		points.push({x:275,y:100});
+
+		for(var i=0;i<points.length-1;i++){
+			var p1=points[i];
+			var p2=points[i+1];
+			addSegment(i,p1.x,p1.y,p2.x,p2.y,colors[i]);
+		}
+
+		
+    
+    }
 
 
     function addSegment(i,x1,y1,x2,y2,color){
@@ -49,33 +83,59 @@ $(function(){
         var line = new Kinetic.Line({
             points: [x1,y1,x2,y2],
             stroke:color,
-            strokeWidth: 25,
+            strokeWidth: 10,
             lineCap:"round",
             lineJoin:"round",
             draggable:true
         });
         line.index=i;
-        line.on("dragend",function(){
+        
+        if(test){
+			line.on("dragend",function(){
 
-            // get the amount of xy drag
-            var i=this.index;
-            var dx=this.getX();
-            var dy=this.getY();
+				// get the amount of xy drag
+				var i=this.index;
+				var dx=this.getX();
+				var dy=this.getY();
 
-            // update the points array
-            var p0=points[i];
-            var p1=points[i+1];
-            p0.x+=dx;
-            p0.y+=dy;
-            p1.x+=dx;
-            p1.y+=dy;
+				// update the points array
+				var p0=points[i];
+				var p1=points[i+1];
+				p0.x+=dx;
+				p0.y+=dy;
+				p1.x+=dx;
+				p1.y+=dy;
 
-            // reset the dragged line
-            this.setPosition(0,0);
-            this.setPoints([p0.x,p0.y,p1.x,p1.y]);
+				// reset the dragged line
+				this.setPosition(0,0);
+				this.setPoints([p0.x,p0.y,p1.x,p1.y]);
 
-            layer.draw();
-        });
+ 				layer.draw();
+			});
+        }else{
+			line.on("dragend",function(){
+// 
+// 				// get the amount of xy drag
+// 				var i=this.index;
+// 				var dx=this.getX();
+// 				var dy=this.getY();
+// 
+// 				// update the points array
+// 				var p0=points[i];
+// 				var p1=points[i+1];
+// 				p0.x+=dx;
+// 				p0.y+=dy;
+// 				p1.x+=dx;
+// 				p1.y+=dy;
+// 
+// 				// reset the dragged line
+// 				this.setPosition(0,0);
+// 				this.setPoints([p0.x,p0.y,p1.x,p1.y]);
+
+				layer.draw();
+			});
+        
+        }
         line.on("dragmove",function(){
 
             // get the amount of xy drag
@@ -108,7 +168,41 @@ $(function(){
     }
 
 
+	
+	
+	function drawPoser(){
+
+
+	
+		var m = 30;
+		var o = 30;
+
+		$.each(stickParts, function(idx, part){
+//console.log(idx, part.lbl);
+
+			var p1x = part.a[0]*m+o;
+			var p1y = part.a[1]*m+o;
+			var p2x = part.b[0]*m+o;
+			var p2y = part.b[1]*m+o;
+
+
+			addSegment(idx, p1x, p1y, p2x, p2y,"black");
+		
+		
+			points.push({x:p1x,y:p1y});
+			points.push({x:p2x,y:p2y});
+		
+		});
+
+
+
+		
+	}
+
 }); // end $(function(){});
+
+
+
 
 </script>       
 </head>
