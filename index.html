@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>StickPoser</title>
     <meta charset="utf-8">
     <title>Prototype</title>
     <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
@@ -10,198 +11,407 @@
 #container{
   border:solid 1px #ccc;
   margin-top: 10px;
-  width:300px;
-  height:300px;
+  width:600px;
+  height:600px;
 }
 </style>        
 <script>
-$(function(){
 
-	var test = true;
+$(document).ready(function(){
+
+}); // end ready
 
 
 	var stickParts = [
-	{a:[2,0],b:[2,1],lbl:"head"},
-	{a:[1,1],b:[2,1],lbl:"rt shldr"},
-	{a:[2,1],b:[3,1],lbl:"lt shldr"},
-	{a:[0,1],b:[1,1],lbl:"rt uppr arm"},
-	{a:[3,1],b:[4,1],lbl:"lt uppr arm"},
-	{a:[0,1],b:[0,2],lbl:"rt lwr arm"},
-	{a:[4,1],b:[4,2],lbl:"lt lwr arm"},
-	{a:[2,1],b:[2,3],lbl:"torso"},
-	{a:[2,3],b:[1,4],lbl:"rt uppr leg"},
-	{a:[2,3],b:[3,4],lbl:"lt uppr leg"},
-	{a:[1,4],b:[1,6],lbl:"rt lwr leg"},
-	{a:[3,4],b:[3,6],lbl:"lt lwr leg"}];
-	
+	{
+		drawIdx: 17,
+		basePos: {a:[2,1],b:[2,0],t:(17/12*Math.PI)},
+		length: 0.8,
+		side: "center",
+		part:"head"},
+	{
+		drawIdx: 1,
+		basePos: {a:[1,1],b:[2,1],t:(Math.PI)},
+		length: 0.5,
+		side: "right",
+		part:"shoulder"},
+	{
+		drawIdx: 5,
+		basePos: {a:[2,1],b:[3,1], t:(2*Math.PI)},
+		length: 0.5,
+		side: "left",
+		part:"shoulder"},
+	{
+		drawIdx: 2,
+		basePos: {a:[0,1],b:[1,1], t:(7/12*Math.PI)},
+		length: 1.25,
+		side: "right",
+		part:"upper arm"},
+	{
+		drawIdx: 6,
+		basePos: {a:[3,1],b:[4,1], t:(1/12*Math.PI)},
+		length: 1.25,
+		side: "left",
+		part:"upper arm"},
+	{
+		drawIdx: 3,
+		basePos: {a:[0,1],b:[0,2], t:(3/4*Math.PI)},
+		length: 1.25,
+		side: "right",
+		part:"lower arm"},
+	{
+		drawIdx: 7,
+		basePos: {a:[4,1],b:[4,2], t:(7/12*Math.PI)},
+		length: 1.25,
+		side: "left",
+		part:"lower arm"},
+	{
+		drawIdx: 4,
+		basePos: {a:[0,1],b:[0,2], t:(1/2*Math.PI)},
+		length: 0.3,
+		side: "right",
+		part:"hand"},
+	{
+		drawIdx: 8,
+		basePos: {a:[4,1],b:[4,2],t: (1/3*Math.PI)},
+		length: 0.3,
+		side: "left",
+		part:"hand"},
+	{
+		drawIdx: 0,
+		basePos: {a:[2,1],b:[2,3], t: (Math.PI/2)},
+		length: 2.25,
+		side: "center",
+		part:"torso"},
+	{
+		drawIdx: 9,
+		basePos: {a:[2,3],b:[1,3], t: (Math.PI)},
+		length: 0.4,
+		side: "right",
+		part:"hip"},
+	{
+		drawIdx: 13,
+		basePos: {a:[2,3],b:[3,3], t:(2*Math.PI)},
+		length: 0.4,
+		side: "left",
+		part:"hip"},
+	{
+		drawIdx: 10,
+		basePos: {a:[1,3],b:[1,4], t:(1/2*Math.PI)},
+		length: 1.5,
+		side: "right",
+		part:"upper leg"},
+	{
+		drawIdx: 14,
+		basePos: {a:[3,3],b:[3,4], t:(1/6*Math.PI)},
+		length: 1.5,
+		side: "left",
+		part:"upper leg"},
+	{
+		drawIdx: 11,
+		basePos: {a:[1,4],b:[1,6], t:(1/2*Math.PI)},
+		length: 1.5,
+		side: "right",
+		part:"lower leg"},
+	{
+		drawIdx: 15,
+		basePos: {a:[3,4],b:[3,6], t:(1/2*Math.PI)},
+		length: 1.5,
+		side: "left",
+		part:"lower leg"},
+	{
+		drawIdx: 12,
+		basePos: {a:[1,6],b:[0,6], t:(3/4*Math.PI)},
+		length: 0.5,
+		side: "right",
+		part:"foot"},
+	{
+		drawIdx: 16,
+		basePos: {a:[3,6],b:[4,6], t:(1/3*Math.PI)},
+		length: 0.5,
+		side: "left",
+		part:"foot"}
+	];
+
+
+$(function(){
+
+	stickParts.sort(function(a,b){return a.drawIdx-b.drawIdx});
 	
     var stage = new Kinetic.Stage({
         container: 'container',
-        width:300,
-        height: 300
+        width: 600,
+        height: 600
     });
-    var layer = new Kinetic.Layer();
-    stage.add(layer);
+    var layer;
 
-    var colors=['red','green','blue','orange'];
+	//m = multiplier - scale factor
+	var m = 50;
+	//o = offset - gives margin
+	var o = 120;	
 
-    var lines=[];
+	var currPart = {};
+	var currBaseX = 0;
+	var currBaseY = 0;
 
-   	var points=[];
-    
-    
-    if(test){
-    	drawTest();
-    }else{
-    	drawPoser();
-    }
+    drawPoser();
+	//testPoser();
     
     layer.draw();
     
-    function drawTest(){
-    
-    	 
-    
-		points.push({x:125,y:50});
-		points.push({x:75,y:75});
-		points.push({x:200,y:200});
-		points.push({x:275,y:100});
+	$(stage.getContent()).on('click', function(e){
+	
+		changePart(e.pageX,e.pageY);
+	
+	}); 
+	
+	function lineDistance( point1, point2 ){
+		var xs = 0;
+		var ys = 0;
 
-		for(var i=0;i<points.length-1;i++){
-			var p1=points[i];
-			var p2=points[i+1];
-			addSegment(i,p1.x,p1.y,p2.x,p2.y,colors[i]);
-		}
+		xs = point2.x - point1.x;
+		xs = xs * xs;
 
+		ys = point2.y - point1.y;
+		ys = ys * ys;
+
+		return Math.sqrt( xs + ys );
+	}
+	
+	function angle(point1, point2){
+	
+		var deltaY = point2.y - point1.y;
+		var deltaX = point2.x - point1.x;
+		//calculate the angle using arctan
+		var angleInRadians = Math.atan2(deltaY ,deltaX); //* 180 / Math.PI;
+//console.log("degrees",Math.atan2(deltaY ,deltaX)* 180 / Math.PI);
 		
+		if(angleInRadians < 0) angleInRadians += Math.PI*2;
+		return angleInRadians;
+	
+	}
+    
+    
+    function changePart(pagex,pagey){
+ 		
+ 		//alert(currPart.drawIdx);
+ 		
+ 		var dist = lineDistance({x:pagex,y:pagey},{x:currBaseX,y:currBaseY});
+ 		
+ 		if(currPart && currPart.drawIdx >= 0){
+ 		
+ 			//check the current xy
+ 			if(!(currBaseX == 0 && currBaseY == 0)){
+			
+				dist = lineDistance({x:pagex,y:pagey},{x:currBaseX,y:currBaseY});
+//console.log("dist", dist, {x:pagex,y:pagey},{x:currBaseX,y:currBaseY});				
+				if(dist > 10){
+				
+					theta = angle({x:currBaseX,y:currBaseY}, {x:pagex,y:pagey});
+					
+//console.log("theta", theta, {x:currBaseX,y:currBaseY}, {x:pagex,y:pagey});					
+					if(theta > 0){
+						currPart.basePos.t = theta; //(11/6*Math.PI);
+
+//console.log("got here",currPart.basePos.t);
+
+			
+
+					}
+			
+				}
+			
+			} 
+    	
+    	}  
+    	
+		layer.clear();
+		drawPoser();
+		layer.draw(); 
     
     }
+    
+    
+    function drawPoser(){
+     	     	
+     	layer = new Kinetic.Layer();
+     	stage.add(layer);
+    
+     	//note - order is important
+     	//adding lines to layer appears to force the line.index
+     	//to always be the order of adding, not what is entered
+     	
+		//torso
+    	drawPart(stickParts[0], null);
+    	
+    	//right armature
+    	drawPart(stickParts[1], stickParts[0]);
+    	drawPart(stickParts[2], stickParts[1]);
+    	drawPart(stickParts[3], stickParts[2]);
+    	drawPart(stickParts[4], stickParts[3]);
+    	
+    	//left armature
+    	drawPart(stickParts[5], stickParts[0]);
+    	drawPart(stickParts[6], stickParts[5]);
+    	drawPart(stickParts[7], stickParts[6]);
+    	drawPart(stickParts[8], stickParts[7]);  
+    	
+    	//right leg
+    	drawPart(stickParts[9], stickParts[0]);
+    	drawPart(stickParts[10], stickParts[9]);
+    	drawPart(stickParts[11], stickParts[10]);
+    	drawPart(stickParts[12], stickParts[11]);     	
+    	
+    	//left leg 
+    	drawPart(stickParts[13], stickParts[0]);
+    	drawPart(stickParts[14], stickParts[13]);
+    	drawPart(stickParts[15], stickParts[14]);
+    	drawPart(stickParts[16], stickParts[15]); 
+     	
+     	//head
+    	drawPart(stickParts[17], stickParts[0]);   	 
+    }
+
+	function drawPart(stickPartToDraw, stickPartFrom){
+		
+		//theta = radians - angle from "b" point on last drawn part
+		var theta = stickPartToDraw.basePos.t;
+//console.log(stickPartToDraw.drawIdx, stickPartToDraw.basePos.t, theta);		
+		//length = relative length to 6 ideal units (ft)
+		
+		//use m and o to transpose to canvas size
+		
+		var startX;
+		var startY;
+		
+		if(!stickPartFrom){
+			startX = 2;
+			startY = 1;
+		}else{
+			//rule: start head (17), shoulders (1,5) from "a" of torso
+			//all others should be "b" of any
+			if(stickPartToDraw.drawIdx == 17 ||
+					stickPartToDraw.drawIdx == 1 ||
+					stickPartToDraw.drawIdx == 5){
+				startX = stickPartFrom.basePos.a[0];
+				startY = stickPartFrom.basePos.a[1];			
+			}else{
+				startX = stickPartFrom.basePos.b[0];
+				startY = stickPartFrom.basePos.b[1];			
+			}
+
+		}		
+		
+		//x = Distance cos θ,and y = D sin θ.
+//console.log(stickPartToDraw.length, theta, Math.cos(theta));
+		var endX = startX + stickPartToDraw.length*Math.cos(theta);	
+		var endY = startY + stickPartToDraw.length*Math.sin(theta);	
+		
+		//save back the basPos
+		stickPartToDraw.basePos.a[0] = startX;
+		stickPartToDraw.basePos.a[1] = startY;
+		stickPartToDraw.basePos.b[0] = endX;
+		stickPartToDraw.basePos.b[1] = endY;
+		
+		
+//console.log(startX,startY,endX,endY);	
+		
+		//transpose the points
+		var p1x = startX*m+o;
+		var p1y = startY*m+o;	
+		var p2x = endX*m+o;
+		var p2y = endY*m+o;		
+		
+		//set widths
+		var width = 10;
+		if(stickPartToDraw.part == "head") width = 20;
+		if(stickPartToDraw.part == "foot") width = 15;
+		if(stickPartToDraw.part == "hand") width = 13;
+		
+		//draw		
+		newIndex = addSegment(0, p1x, p1y, p2x, p2y, stickPartToDraw.color, width);
+		
+		stickPartToDraw.drawIdx = newIndex;
+
+		return newIndex;
+
+	}	
 
 
-    function addSegment(i,x1,y1,x2,y2,color){
+	function testPoser(){
+		//use to test after changes to stickParts
+		stickParts.sort(function(a,b){return a.drawIdx-b.drawIdx});
+		
+		$.each(stickParts, function(idx, pt){
+			console.log(idx, pt.drawIdx, pt.side, pt.part);
+		});
+		
+	}
+
+
+
+    function addSegment(i,x1,y1,x2,y2,color, width){
 
         var line = new Kinetic.Line({
             points: [x1,y1,x2,y2],
             stroke:color,
-            strokeWidth: 10,
+            strokeWidth: width,
             lineCap:"round",
             lineJoin:"round",
-            draggable:true
+            //draggable:true
         });
-        line.index=i;
         
-        if(test){
-			line.on("dragend",function(){
-
-				// get the amount of xy drag
-				var i=this.index;
-				var dx=this.getX();
-				var dy=this.getY();
-
-				// update the points array
-				var p0=points[i];
-				var p1=points[i+1];
-				p0.x+=dx;
-				p0.y+=dy;
-				p1.x+=dx;
-				p1.y+=dy;
-
-				// reset the dragged line
-				this.setPosition(0,0);
-				this.setPoints([p0.x,p0.y,p1.x,p1.y]);
-
- 				layer.draw();
-			});
-        }else{
-			line.on("dragend",function(){
-// 
-// 				// get the amount of xy drag
-// 				var i=this.index;
-// 				var dx=this.getX();
-// 				var dy=this.getY();
-// 
-// 				// update the points array
-// 				var p0=points[i];
-// 				var p1=points[i+1];
-// 				p0.x+=dx;
-// 				p0.y+=dy;
-// 				p1.x+=dx;
-// 				p1.y+=dy;
-// 
-// 				// reset the dragged line
-// 				this.setPosition(0,0);
-// 				this.setPoints([p0.x,p0.y,p1.x,p1.y]);
-
-				layer.draw();
-			});
         
-        }
-        line.on("dragmove",function(){
+         line.on("click", function(e){
 
-            // get the amount of xy drag
-            var i=this.index;
-            var dx=this.getX();
-            var dy=this.getY();
+			var indexIn = this.index;
+			
+			//turn everything black
+			$.each(stickParts, function(idx, sPart){
 
-            // adjust the ending position of the previous line
-            if(i>0){
-                var line=lines[i-1];
-                var pts=line.getPoints();
-                pts[1].x=points[i].x+dx;
-                pts[1].y=points[i].y+dy;
-                line.setPoints(pts);
-            }
+				sPart.color = "black";
 
-            // adjust the starting position of the next line
-            if(i<lines.length-1){
-                var line=lines[i+1];
-                var pts=line.getPoints();
-                pts[0].x=points[i+1].x+dx;
-                pts[0].y=points[i+1].y+dy;
-                line.setPoints(pts);
-            }
+			});
+			
+//console.log(indexIn,currPart.drawIdx)			
+			
+			if(currPart && indexIn == currPart.drawIdx){
+				//turn off - undo
+				currPart = {};
+				currBaseX = 0;
+				currBaseY = 0;
+						
+				
+			}else{
+			
+				//find and set the current
+				$.each(stickParts, function(idx, sPart){
+		
+					if(sPart.drawIdx == indexIn){
+						//alert("Current Part is " +  sPart.side + " " +  sPart.part);
+						currPart = sPart;
+						currBaseX = sPart.basePos.a[0]*m+o;
+						currBaseY = sPart.basePos.a[1]*m+o;
+						sPart.color = "red";
+					}
+		
+				});		
+         		
+         	}	
+         	
+         	e.cancelBubble = true;
+    	
+         }); //end on line
 
-            layer.draw();
-        });
-        layer.add(line);
-        lines.push(line);
+         
+         
+         //last steps
+        layer.add(line);       
+        return line.index;
+        
     }
 
-
-	
-	
-	function drawPoser(){
-
-
-	
-		var m = 30;
-		var o = 30;
-
-		$.each(stickParts, function(idx, part){
-//console.log(idx, part.lbl);
-
-			var p1x = part.a[0]*m+o;
-			var p1y = part.a[1]*m+o;
-			var p2x = part.b[0]*m+o;
-			var p2y = part.b[1]*m+o;
-
-
-			addSegment(idx, p1x, p1y, p2x, p2y,"black");
-		
-		
-			points.push({x:p1x,y:p1y});
-			points.push({x:p2x,y:p2y});
-		
-		});
-
-
-
-		
-	}
-
-}); // end $(function(){});
-
-
+});
 
 
 </script>       
