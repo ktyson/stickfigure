@@ -1,1 +1,422 @@
-test
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>StickPoser Prototype</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.5.5.min.js"></script>
+
+<style>
+#container{
+  border:solid 1px #ccc;
+  margin-top: 10px;
+  width:600px;
+  height:600px;
+}
+</style>        
+<script>
+
+$(document).ready(function(){
+
+}); // end ready
+
+
+	var stickParts = {};
+	stickParts["head"] = {
+		//0
+		drawIdx: 0,
+		basePos: {a:[3,0.7],b:[3,0],length: 0.9}
+		};
+	stickParts["neck"] = {
+		//1
+		drawIdx: 0,
+		basePos: {a:[3,1],b:[3,0.7],length: 0.1},
+		};
+	stickParts["right_arm"] = {
+		//2
+		drawIdx: 0,
+		basePos: {a:[3,1],b:[1,1],length: 2}
+		};
+	stickParts["left_arm"] = {
+		//3
+		drawIdx: 0,
+		basePos: {a:[3,1],b:[5,1], length: 1.25},		
+		};
+	stickParts["right_hand"] = {
+		//4
+		drawIdx: 0,
+		basePos: {a:[1,1],b:[0.5,1], length: 0.3},
+		};
+	stickParts["left_hand"] = {
+		//5
+		drawIdx: 0,
+		basePos: {a:[5,1],b:[5.5,1],length: 0.3},
+		};
+	stickParts["torso"] = {
+		//6
+		drawIdx: 0,
+		basePos: {a:[3,1],b:[3,3], length: 2.25},
+		};
+	stickParts["right_leg"] = {
+		//7
+		drawIdx: 0,
+		basePos: {a:[3,3],b:[1,5], length: 1.5},
+		};
+	stickParts["left_leg"] = {
+		//8
+		drawIdx: 0,
+		basePos: {a:[3,3],b:[5,5], length: 1.5},
+		};
+	stickParts["right_foot"] = {
+		//9
+		drawIdx: 0,
+		basePos: {a:[1,5],b:[0.5,5], length: 0.5},
+		};
+	stickParts["left_foot"] = {
+		//10
+		drawIdx: 0,
+		basePos: {a:[5,5],b:[5.5,5], length: 0.5},
+		};
+
+
+$(function(){
+
+	//stickParts.sort(function(a,b){return a.drawIdx-b.drawIdx});
+	
+    var stage = new Kinetic.Stage({
+        container: 'container',
+        width: 600,
+        height: 600
+    });
+    var layer;
+    var layerPts;
+    layer = new Kinetic.Layer();
+    layerPts = new Kinetic.Layer();
+    stage.add(layer);
+    stage.add(layerPts);
+    
+    
+    
+	//m = multiplier - scale factor
+	var m = 50;
+	//o = offset - gives margin
+	var o = 120;	
+
+	var currPart = {};
+	var currName = "";
+	var currBaseX = 0;
+	var currBaseY = 0;
+	
+
+       
+	drawPoser();    
+
+    layer.draw();
+    layerPts.draw();
+    
+	$(stage.getContent()).on('click', function(e){
+	
+		//changePart(e.pageX,e.pageY);
+	
+	}); 
+        
+    function changePart(){
+//console.log("layer clear"); 		 	
+		layer.removeChildren();
+		layerPts.removeChildren();
+		drawPoser();
+		layer.draw(); 
+		layerPts.draw(); 
+    
+    }
+    
+    
+    function drawPoser(){
+
+    	drawPart("torso", null, null);    	
+
+    	drawPart("neck", "torso", "a");    
+   		
+    	drawPart("head", "neck", "b");    	
+    	drawPart("right_arm", "torso", "a");    	
+    	drawPart("right_hand", "right_arm", "b");    	
+    	drawPart("left_arm", "torso", "a");    	
+    	drawPart("left_hand", "left_arm", "b");    	
+    	drawPart("right_leg", "torso", "b");
+    	drawPart("right_foot", "right_leg", "b");
+    	drawPart("left_leg", "torso", "b");
+    	drawPart("left_foot", "left_leg", "b");
+    	
+
+    	
+    	
+ /**/
+		//testPoser(); 	 
+    }
+
+
+	$(".btn").on("click", function(){	
+		changePart();	
+	});
+
+	function drawPart(partToDraw, partFrom, fromEnd){
+		
+		//returns the index of the part created
+//console.log(partToDraw, partFrom, fromEnd);			
+		
+		var stickPartToDraw = stickParts[partToDraw];
+		var stickPartFrom = stickParts[partFrom];
+		
+		//length and pts = relative length to gris of 6 ideal units (ft)		
+		//use m and o to transpose to canvas size
+		
+		var startX; 
+		var startY;
+		var endX;
+		var endY;
+				
+		//recalc start and end positions of part
+		if(fromEnd){
+			startX = stickPartFrom.basePos[fromEnd][0];
+			startY = stickPartFrom.basePos[fromEnd][1];
+		}else{
+			startX = stickPartToDraw.basePos.a[0];
+			startY = stickPartToDraw.basePos.a[1];
+		}
+		endX= stickPartToDraw.basePos.b[0];
+		endY = stickPartToDraw.basePos.b[1];	
+		
+		//recalc midPts of part
+		var dist = lineDistance({x:startX,y:startY},{x:endX,y:endY});
+		var midPts = stickPartToDraw.basePos.midPts || [];
+		
+		var divideBy;
+		var newX;
+		var newY;
+		
+		if (midPts.length == 0 && dist > 1){
+			divideBy = 2;
+			newX = startX + (endX - startX) / divideBy;
+			newY = startY + (endY - startY) / divideBy;
+			midPts.push(newX, newY);
+		
+//console.log("midPts", dist, midPts);		
+		
+		}		
+		
+ 		//save back the basePos
+ 		stickPartToDraw.basePos.a[0] = startX;
+ 		stickPartToDraw.basePos.a[1] = startY;
+ 		stickPartToDraw.basePos.b[0] = endX;
+ 		stickPartToDraw.basePos.b[1] = endY;
+ 		stickPartToDraw.basePos.midPts = midPts;
+			
+//console.log(startX,startY,endX,endY);	
+		
+		//transpose the end points
+		var p1x = startX*m+o;
+		var p1y = startY*m+o;	
+		var p2x = endX*m+o;
+		var p2y = endY*m+o;		
+		
+		var pts = [];
+		
+		//add start
+		pts.push(startX*m+o);
+		pts.push(startY*m+o);
+		
+		//add mid
+		for(var i = 0; i < midPts.length; i++){
+			pts.push(midPts[i]*m+o);
+		}
+		
+		//add end
+		pts.push(endX*m+o);
+		pts.push(endY*m+o);
+
+
+//console.log("Pts", pts);
+
+		var tens = $("#tens").val();
+				
+		//draw	spline		
+        stickPartToDraw.drawIdx = addSpline(tens, pts);
+        
+        if(currPart.drawIdx == stickPartToDraw.drawIdx){
+        
+			//draw points
+			stickPartToDraw.drawPts = [];
+		
+			stickPartToDraw.drawPts.push(addPoint(pts[0],pts[1], "yellow"));
+		
+			for(var i = 2; i < pts.length - 2; i = i + 2){
+	  
+				stickPartToDraw.drawPts.push(addPoint(pts[i],pts[i+1], "aqua"));	
+		
+			}
+				
+			stickPartToDraw.drawPts.push(addPoint(pts[pts.length - 2],pts[pts.length-1], "orange"));
+        
+        }
+
+	}	
+
+
+	function testPoser(){
+		//use to test after changes to stickParts
+		//stickParts.sort(function(a,b){return a.drawIdx-b.drawIdx});		
+		$.each(stickParts, function(idx, pt){
+			console.log(idx, pt.drawIdx);
+		});		
+	}
+
+ 	
+	function addPoint(inX, inY, color){
+		
+		var pt = new Kinetic.Circle({
+		  x: inX,
+		  y: inY,		
+		  radius: 5,
+		  fill: color,
+		  stroke: 'red',
+		  strokeWidth: 1,
+		  draggable:true
+		});
+
+		pt.on("click", function(){
+			console.log("pt click", currName);
+		});
+		
+		pt.on("dragend", function(){
+		
+//console.log("dragend curr is", currName, this.index, this.getX(), this.getY());
+			
+			//cannot use this inside $.each
+			var myIndex = this.index;
+			var myX = this.getX();
+			var myY = this.getY();
+			var refX;
+			var refY;
+			
+			$.each(currPart.drawPts, function(idx, ptIndex){
+
+				if(ptIndex == myIndex){
+
+					refX = ((myX-o)/m);
+					refY = ((myY-o)/m);					
+			
+//console.log(currPart.basePos.midPts, myX,myY,refX,refY);
+
+					return false;		
+				}
+	
+			});
+		
+			stickParts[currName].basePos.midPts = [refX,refY];
+			
+			changePart();
+		
+		});
+
+		layerPts.add(pt);
+
+//console.log("my pt index", pt.index);		
+		return pt.index;
+	
+	}
+
+	
+	function addSpline(tens, pts){
+	
+	
+		var spline = new Kinetic.Spline({
+		  points: pts,
+		  stroke: 'black',
+		  tension: tens,
+		  strokeWidth: 10,
+		  lineCap:"round",
+          lineJoin:"round"
+		});	
+		
+		spline.on("click", function(){
+			
+			//clear
+			currPart = {};
+			currName = getSpline(this.index);
+			currBaseX = 0;
+			currBaseY = 0;
+			
+			//turn everything black
+			$.each(stickParts, function(idx, sPart){
+					sPart.color = "black";
+			});
+			
+			//set
+			currPart = stickParts[currName];
+			currBaseX = currPart.basePos.a[0]*m+o;
+			currBaseY = currPart.basePos.a[1]*m+o;
+
+//console.log("spline on click curr set to", 	currName);		
+			changePart();	
+								
+		});
+		
+		layer.add(spline);
+		
+		return spline.index;
+	
+	}
+	
+	function getSpline(idx){
+		//find the part given its index
+		var result = "";
+		$.each(stickParts, function(name, part){
+			if(part.drawIdx == idx){
+				result = name;
+				return false;
+			}
+		
+		});
+		
+		
+		return result;
+	
+	} 	
+
+
+//utility
+function lineDistance( point1, point2 ){
+		var xs = 0;
+		var ys = 0;
+
+		xs = point2.x - point1.x;
+		xs = xs * xs;
+
+		ys = point2.y - point1.y;
+		ys = ys * ys;
+
+		return Math.sqrt( xs + ys );
+}
+
+
+});
+
+
+
+
+</script>       
+</head>
+
+<body>
+    <div id="container"></div>
+    <div id="control">Roundness:
+    	<input id="tens" value="1.0" size="6"></input>
+    	<input type="button" class="btn" id="tens_10" value="1.0" onclick="$('#tens').val(1.0)"></input>
+    	<input type="button" class="btn" id="tens_08" value="0.8" onclick="$('#tens').val(0.8)"></input>
+    	<input type="button" class="btn" id="tens_06" value="0.6" onclick="$('#tens').val(0.6)"></input>
+    	<input type="button" class="btn" id="tens_04" value="0.4" onclick="$('#tens').val(0.4)"></input>
+    	<input type="button" class="btn" id="tens_02" value="0.2" onclick="$('#tens').val(0.2)"></input>
+    	<input type="button" class="btn" id="tens_00" value="0.0" onclick="$('#tens').val(0.0)"></input>
+    </div>
+</body>
+
