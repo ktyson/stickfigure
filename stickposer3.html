@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>StickPoser Prototype 3</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.5.5.min.js"></script>
+    
+    <script type="text/javascript" src="PoseFigure.js"></script>
+    <script type="text/javascript" src="PosePart.js"></script>
+    <script type="text/javascript" src="PoseFile.js"></script>
+    
+
+<style>
+#container{
+  border:solid 1px #ccc;
+  margin-top: 10px;
+  width:600px;
+  height:600px;
+}
+</style>        
+<script>
+
+var figure;
+var layerParts,
+    layerPoints;
+var activePartIndex;
+    	
+$(document).ready(function(){
+
+	makeControls();
+
+	var stage = new Kinetic.Stage({
+        container: 'container',
+        width: 600,
+        height: 600
+    });
+
+    layerParts = new Kinetic.Layer();
+    layerPoints = new Kinetic.Layer();
+    stage.add(layerParts);
+    stage.add(layerPoints);   
+    
+	$(".btnRound").on("click", function(){
+		var tens = $(this).val();
+
+		figure.GetParts()[activePartIndex].SetTension(parseFloat(tens));
+	});
+	
+	$(".btnNumMid").on("click", function(){
+		var num = $(this).val();
+
+		figure.GetParts()[activePartIndex].SetNumMidPts(parseInt(num), layerPoints);
+	}); 
+	
+	$("#getFile").on("click", function(){
+		var txt = "";
+		var name = prompt("Enter Name");
+		if(name){
+			txt = figure.Write(name);
+			$("#writeFile").text(txt);
+		}
+	});  
+	
+	$("#poses").on("change", function(){
+    	figure = new PoseFigure(Pose[this.value]);
+    	figure.Draw(layerParts, layerPoints);	
+	});
+
+    figure = new PoseFigure(Pose["BASE"]);
+    figure.Draw(layerParts, layerPoints);	
+
+});
+
+function RedrawFigure(){
+	figure.Draw(layerParts, layerPoints);
+}
+
+function SetActivePart(part_idx){
+	activePartIndex = part_idx;
+console.log("new part index", part_idx);
+}
+
+function makeControls(){
+
+	$.each(Pose, function(idx, pose){
+		$('<option>').val(idx).text(idx).appendTo('#poses');
+	});
+}
+
+</script>       
+</head>
+
+<body>
+    <div id="container"></div>
+    <div id="control">
+    	Select Pose: <select id="poses"></select>
+    	<br/>Roundness:
+    	<input id="tens" value="1.0" size="6"></input>
+    	<input type="button" class="btnRound" value="1.0" ></input>
+    	<input type="button" class="btnRound" value="0.8" ></input>
+    	<input type="button" class="btnRound" value="0.6" ></input>
+    	<input type="button" class="btnRound" value="0.4" ></input>
+    	<input type="button" class="btnRound" value="0.2" ></input>
+    	<input type="button" class="btnRound" value="0.0" ></input>
+    	<br/>Number Mid Points:
+		<input type="button" class="btnNumMid" value="1" ></input>
+    	<input type="button" class="btnNumMid" value="2" ></input>
+    	<input type="button" class="btnNumMid" value="3" ></input>
+    	<input type="button" class="btnNumMid" value="4" ></input>
+    	<input type="button" class="btnNumMid" value="5" ></input>
+    	<input type="button" class="btnNumMid" value="6" ></input> 
+    	<br/>Get Pose File Text: 
+    	<input type="button" id="getFile" value="Get File"></input> 
+    	<br/><textarea id="writeFile"></textarea> 	
+    </div>
+</body>
