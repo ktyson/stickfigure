@@ -1,325 +1,133 @@
-//prototype class pattern
-var PosePart = (function() {
+var PoseFigure = (function() {
 
 	//private static attributes
-	var m = PoseFigure.ScaleFactor(); //scale multiplier
-	var o = PoseFigure.OffsetX(); //offset
 
 	//private static methods
-	function checkThisOut(someVar) {
-		doSomething;
-	}
 
 	//return constructor
-	return function(idx, configPart) {
+	return function(poseConfig) {
 
 
 		//private attributes
-		var name, startPoint, endPoint;
-		var drawOrder;
-		var drawFromLast = {};
-		var midPoints = [];
-		var drawIdx;
-		var partIdx;
-		var tension;
-		var numMidPts;	
+		var name;
+		var parts = [];
 
 		//privileged methods
-		
-		this.write = function(){
-		
-			var j = {};
-			j.drawOrder = drawOrder;
-			j.drawFromLast = drawFromLast;
-			j.name = name;
-			j.startPoint = startPoint;
-			j.midPoints = midPoints;
-			j.endPoint = endPoint;
-			j.numMidPoints = numMidPts;
-			j.tension = tension;
-			
-			return JSON.stringify(j);		
-		
+		this.getParts = function(){
+			return parts;
 		};
+				
+		this.drawAllParts = function(layerParts, layerPoints){
 		
-		this.getXformedPointArray = function(){
-		
-			var arrPoints = [];
+			//must draw in order, and retrieve the attachment startPoint from previous
 
-			//flatten points to array
-			$.each(startPoint, function(idx, coord){
-				arrPoints.push(coord*m+o);
-			});
-			$.each(midPoints, function(idx, pair){
-				arrPoints.push(pair[0]*m+o);
-				arrPoints.push(pair[1]*m+o);
-			});
-			$.each(endPoint, function(idx, coord){
-				arrPoints.push(coord*m+o);
-			});
+			var startPoint;
 						
-			return arrPoints;
+			//test loop
+			//for(var i = 0; i < parts.length; i++){			
+//console.log(i, parts[i].GetName());							
+			//}
+		
+			//loop the parts in draw order 
+			for(var j = 0; j < parts.length; j++){
+
+				//if(j >= 1){
 				
-		};
-	
-		
-		this.drawPoints = function(layerPoint){
-		
-			var arrPoints = [];
-
-			var obj = {};
-			var point;
-			
-			layerPoint.removeChildren();
-			
-			//startPoint
-			this.drawPoint(layerPoint, startPoint[0]*m+o,startPoint[1]*m+o, "gray");
-
-			//midPoints
-			for(var i = 0; i < midPoints.length; i++){
-				this.drawPoint(layerPoint, midPoints[i][0]*m+o,midPoints[i][1]*m+o, "aqua");
-			}			
-			
-			//endPoint
-			this.drawPoint(layerPoint, endPoint[0]*m+o,endPoint[1]*m+o, "orange");
-				
-			layerPoint.draw();
-			this.TriggerPartChange(partIdx);
-		
-		};
-		
-		this.drawPoint = function(layerPoint, x, y, color){
-		
-			var obj = {
-			  x: x,
-			  y: y,		
-			  radius: 5,
-			  fill: color,
-			  stroke: 'red',
-			  strokeWidth: 1,
-			  draggable:true
-			};
-			
-			var point = new Kinetic.Circle(obj);
-
-			var me = this; //for events 'this' wont work			
-			point.on("dragmove", function(){
-				if(this.index == 0){
-					this.setDraggable(false);
-				}
-
-				if(this.index > 0){
-					if(me.resetMidPoints(this.index, this.getX(), this.getY())){
-//console.log("drag redraw");	
-						me.TriggerRedraw();
+					var drawFrom = parts[j].GetDrawFromLast();
+//console.log("in j loop draw", parts[j].GetName(), "from", drawFrom.part, "at", drawFrom.site);
+					//loop the parts to find the last part's index
+					for(var k = 0; k < parts.length; k++){
+						if (parts[k].GetName() == drawFrom.part){
+							startPoint = parts[k].GetNextStartPoint(drawFrom.site);
+						}
 					}
-				}
-
-			});
-			point.on("dragend", function(){
-
-				if(this.index > 0){
-					if(me.resetMidPoints(this.index, this.getX(), this.getY())){
-//console.log("end drag");	
-						me.TriggerRedraw();
-					}
-				}				
-
-			});		
-			
-			layerPoint.add(point);
-		
-		}
-		
-		this.resetMidPoints = function(myIndex, myX, myY){
-		
-
-
-			var refX;
-			var refY;
-			
-			for(var i = 0; i < midPoints.length; i++){
-				//how match?
-//console.log("reset match",i,myIndex-1);				
-				if(i == (myIndex-1)){
-//console.log("reset success",i,myIndex-1);	
-					refX = ((myX-o)/m);
-					refY = ((myY-o)/m);	
-					midPoints[i] = [refX, refY];				
-					return true;		
-				}
-	
-			}
-			
-			if(myIndex != 0){
-				//must be end point
-				refX = ((myX-o)/m);
-				refY = ((myY-o)/m);	
+//console.log("after k loop startPoint", startPoint || "none");					
+					parts[j].Draw(layerParts, layerPoints, startPoint);
 					
-				endPoint = [refX, refY];
-				return true;
+				//}else{
+					//first part has no attach 
+				//	parts[j].Draw(layerParts, layerPoints);
+				//}
+					
+			}							
+		
+		};	
+		
+		this.writeFile = function(poseName){
+			
+			var beginTxt = [];
+			var mainTxt = [];
+			var endTxt = [];
+	
+			beginTxt.push("Pose[\"" + poseName + "\"] = {");
+			beginTxt.push("name: \"" + poseName + "\",");
+			beginTxt.push("parts: [");
+			
+			for(var i = 0; i < parts.length; i++){
+			
+				mainTxt.push(parts[i].Write());
+			
 			}
 			
-//console.log("new mids", refX, refY);
-
+			endTxt.push("]};");
 			
+			return beginTxt.join('\n') + mainTxt.join(',\n') + endTxt.join('\n');
 		
-		}
-				
-		this.drawPart = function(layerPart, layerPoint, startPointFromLast){
-		
-			if(startPointFromLast){
-				startPoint = startPointFromLast;
-			}
-
-			var obj = {
-			  points: this.getXformedPointArray(),
-			  stroke: 'black',
-			  tension: tension,
-			  strokeWidth: 10,
-			  lineCap:"round",
-			  lineJoin:"round"
-			};
-			
-//console.log("draw",obj.points.toString());
-			
-			var spline = new Kinetic.Spline(obj);
-			
-			var me = this; //for events 'this' wont work
-			spline.on("click", function(){
-				console.log("click", spline.index, name, drawIdx, this.index);
-				me.drawPoints(layerPoint);
-			});
-			
-			layerPart.add(spline);	
-			
-			drawIdx = spline.index;
-//console.log(name + " drawIdx set to " + drawIdx);
-		};
-
-
-		
-		this.insertMidPoints = function(numMidPts, layerPoint){
-		
-//console.log("old midpts", midPoints.toString());	
-
-			//clear midPoints
-			midPoints = [];
-		
-			//recalc midPts of part
-			//var dist = lineDistance({x:startPoint[0],y:startPoint[1]},
-			//	{x:endPoint[0],y:endPoint[1]});
-			var num = numMidPts+1;//num must be 2 or above
-			var newX;
-			var newY;
-			
-			for(var i = 1; i < num; i++){
-
-				newX = startPoint[0] + (endPoint[0] - startPoint[0]) * i/num;
-				newY = startPoint[1] + (endPoint[1] - startPoint[1]) * i/num;
-				midPoints.push([newX, newY]);	
-//console.log("new midpts", i, i/num, midPoints.toString());			
-			}
-		
-		}
-
-		
-		this.setDrawIdx = function(idx){
-			drawIdx = idx;
-		};
-		
-		this.getName = function(){
-		
-			//console.log("Clicked", name);
-			return name;
-		};
-		
-		this.getDrawFromLast = function(){
-			return drawFromLast;
-		};
-		
-		this.getNextStartPoint = function(which){
-			if(which == "start"){
-				return startPoint;
-			}else{
-				return endPoint;
-			}
-		};
-		
-		this.setTension = function(val){
-//console.log(name,"old tension", tension);
-			tension = val;
-//console.log(name,"new tension", tension);
-			this.TriggerRedraw();
-		};
-
-		this.setNumMidPts = function(val, layerPoint){
-			
-//console.log(name,"old num", numMidPts);
-			numMidPts = val;			
-			this.insertMidPoints(numMidPts, layerPoint);			
-			this.drawPoints(layerPoint);
-			this.TriggerRedraw();
-//console.log(name,"new num", numMidPts);			
-		};
+		}	
 
 		//constructor code
 		
-		partIdx = idx;
+		name = poseConfig.name;
+		if(1==1){
+			console.log("constructing new PoseFigure with name " + name);
+		}
+//	console.log(this.parentNode);
 		
-		name = configPart.name;
-		startPoint = configPart.startPoint;		
+		poseConfig.parts.sort(function(a,b){return a.drawOrder-b.drawOrder});
+		
+		$.each(poseConfig.parts, function(idx, prt){
 			
-		endPoint = configPart.endPoint;
-		
-		drawOrder = configPart.drawOrder;
-		drawFromLast = configPart.drawFromLast;
+			var newPart = new PosePart(idx, prt);			
+			
+			parts.push(newPart);
+			
+//console.log(prt.name, prt.drawOrder);
 
-		tension = configPart.tension;
-		numMidPts = configPart.numMidPts;
-		
-		if(configPart.midPoints.length == 0){
-			this.insertMidPoints(numMidPts);
-		}else{
-			midPoints = configPart.midPoints;
-		}	
+		});
+
 	}
+
 })();
 
 //public static method
-// PosePart.PoseParent = function(obj) {
-// 	this.setParent(obj);
-// 
-// };
+PoseFigure.ScaleFactor = function() {
+	return 75;
+};
+PoseFigure.OffsetX = function() {
+	return 50;
+};
+PoseFigure.OffsetY = function() {
+	return 50;
+};
 
 //public nonprivileged methods
-PosePart.prototype = {
-	Draw: function(layerPart, layerPoint, startPointFromLast){
-		console.log("drawing " + this.getName());
-		this.drawPart(layerPart, layerPoint, startPointFromLast);
-	},	
-	TriggerRedraw: function(){		
-		RedrawFigure();
-	},	
-	TriggerPartChange: function(idx){	
-		SetActivePart(idx);
-	},	
-	GetDrawFromLast: function(){
-		return this.getDrawFromLast();
-	},	
-	GetNextStartPoint: function(which){		
-		return this.getNextStartPoint(which);
-	},	
-	GetName: function(){
-		return this.getName();
-	},	
-	SetTension: function(val){
-		this.setTension(val);
+PoseFigure.prototype = {
+	
+	Draw: function(layerParts, layerPoints){
+	
+		layerParts.removeChildren();	
+		//layerPoints.removeChildren();	
+		
+		this.drawAllParts(layerParts, layerPoints);		
+		layerParts.draw();
 	},
-	SetNumMidPts: function(val, layerPoint){
-		this.setNumMidPts(val, layerPoint);
-	},	
-	Write: function(){
-		return this.write();
-	}	
+	
+	GetParts: function(){
+		return this.getParts();
+	},
+	
+	Write: function(poseName){
+		return this.writeFile(poseName);
+	}
+
 };
