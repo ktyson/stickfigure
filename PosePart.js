@@ -1,6 +1,6 @@
 //prototype class pattern
 var PosePart = (function() {
-
+	
 	//private static attributes
 	var m = PoseFigure.ScaleFactor(); //scale multiplier
 	var o = PoseFigure.OffsetX(); //offset
@@ -89,11 +89,13 @@ var PosePart = (function() {
 		};
 		
 		this.drawPoint = function(layerPoint, x, y, color){
-		
+			// touchscreen needs larger circles to target
+			var isTouch = 'ontouchstart' in document.documentElement;
+			
 			var obj = {
 			  x: x,
 			  y: y,		
-			  radius: 5,
+			  radius: (isTouch == true ? 20 : 5),
 			  fill: color,
 			  stroke: 'red',
 			  strokeWidth: 1,
@@ -103,10 +105,14 @@ var PosePart = (function() {
 			var point = new Kinetic.Circle(obj);
 
 			var me = this; //for events 'this' wont work			
-			point.on("dragmove", function(){
+			
+			point.on("dragmove touchmove", function(){
 				if(this.index == 0){
 					this.setDraggable(false);
 				}
+				
+				var container = this.parent.parent.attrs.container;
+				$(container).css("cursor", "move");
 
 				if(this.index > 0){
 					if(me.resetMidPoints(this.index, this.getX(), this.getY())){
@@ -116,16 +122,34 @@ var PosePart = (function() {
 				}
 
 			});
-			point.on("dragend", function(){
-
+			point.on("dragend touchend", function(){
+				var container = this.parent.parent.attrs.container;
+				$(container).css("cursor", "default");
+				
 				if(this.index > 0){
 					if(me.resetMidPoints(this.index, this.getX(), this.getY())){
 //console.log("end drag");	
 						me.TriggerRedraw();
 					}
-				}				
+				}
+				
+			});
 
-			});		
+			point.on("mouseover", function(){
+				var container = point.parent.parent.attrs.container;
+				$(container).css("cursor", "move");
+			});
+			
+			point.on("mouseout", function(){
+				// hpsmart touchscreen sometimes triggers a mouseout error when using it as a touch device
+				try {
+					var container = point.parent.parent.attrs.container;
+					$(container).css("cursor", "default");
+				}
+				catch(err) {
+					// just want to avoid printing errors to the console
+				}
+			});				
 			
 			layerPoint.add(point);
 		
@@ -171,12 +195,15 @@ var PosePart = (function() {
 			if(startPointFromLast){
 				startPoint = startPointFromLast;
 			}
+			
+			// touchscreen needs thicker lines to target
+			var isTouch = 'ontouchstart' in document.documentElement;
 
 			var obj = {
 			  points: this.getXformedPointArray(),
 			  stroke: 'black',
 			  tension: tension,
-			  strokeWidth: 10,
+			  strokeWidth: (isTouch == true ? 24 : 10),
 			  lineCap:"round",
 			  lineJoin:"round"
 			};
@@ -186,7 +213,24 @@ var PosePart = (function() {
 			var spline = new Kinetic.Spline(obj);
 			
 			var me = this; //for events 'this' wont work
-			spline.on("click", function(){
+			
+			spline.on("mouseover", function(){
+				var container = spline.parent.parent.attrs.container;
+				$(container).css("cursor", "pointer");
+			});
+			
+			spline.on("mouseout", function(){
+				// hpsmart touchscreen sometimes triggers a mouseout error when using it as a touch device
+				try {
+					var container = spline.parent.parent.attrs.container;
+					$(container).css("cursor", "default");
+				}
+				catch(err) {
+					// just want to avoid printing errors to the console
+				}
+			});
+			
+			spline.on("click touchstart", function(){
 				console.log("click", spline.index, name, drawIdx, this.index);
 				me.drawPoints(layerPoint);
 			});
