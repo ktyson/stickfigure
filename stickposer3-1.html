@@ -11,7 +11,8 @@
     <script type="text/javascript" src="PoseFile.js"></script>
     
 
-<style>
+
+<style type="text/css">
 #container{
 	border:solid 1px #ccc;
 	margin-top: 10px;
@@ -21,7 +22,7 @@
 }
 
 #exportedImageDiv{
-	display:none;
+	xxdisplay:none;
 }
 
 #downloadImage{
@@ -36,6 +37,26 @@
 #control{
 	clear: both;
 }
+
+
+.menuItem {
+	-webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	-moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	background-color:#5B74A8;
+	border:1px solid #29447E;
+	font-family:'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+	font-size:12px;
+	font-weight:700;
+	padding:2px 6px;
+	height:28px;
+	color:#fff;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	cursor:pointer;
+}
+
 </style>        
 <script>
 
@@ -43,6 +64,7 @@ var figure;
 var layerParts,
     layerPoints;
 var activePartIndex;
+var isPart;
     	
 $(document).ready(function(){
 
@@ -58,6 +80,26 @@ $(document).ready(function(){
     layerPoints = new Kinetic.Layer();
     stage.add(layerParts);
     stage.add(layerPoints);   
+    
+    $(".menu_content").hide();
+  	$("#draw").show();
+  	
+    $(".menuItem").on("click", function(){
+    	$(".menu_content").hide();
+    	var showThis = $(this).attr("id").substring(5);
+    	$("#" + showThis).show();
+    });
+        
+    $("#container").on("click", function(){
+    
+    	clickTimer = setTimeout(function(){
+			if(!isPart){
+				layerPoints.clear();				
+			}
+			isPart = false;
+    	}, 500);
+    
+    });
     
 	$(".btnRound").on("click", function(){
 		var tens = $(this).val();
@@ -117,13 +159,15 @@ $(document).ready(function(){
 
 });
 
-function RedrawFigure(){
-	figure.Draw(layerParts, layerPoints);
+function RedrawFigure(diffInMotion){
+	figure.Draw(layerParts, layerPoints, diffInMotion);
 }
 
 function SetActivePart(part_idx){
 	activePartIndex = part_idx;
-console.log("new part index", part_idx);
+	isPart = true;
+//console.log("new part index", part_idx);
+
 }
 
 function makeControls(){
@@ -137,48 +181,62 @@ function makeControls(){
 </head>
 
 <body>
-	<div id="slides">
+	<div id="menu">
+		<span id='menu_draw' class='menuItem'>Draw</span>
+		<span id='menu_guide' class='menuItem'>Guide</span>
+		<span id='menu_save' class='menuItem'>Save</span>
+	</div>
+	
+	<div id="draw" class="menu_content">
+		<div id="container"></div>
+		<div id="control">
+			Select Pose: <select id="poses"></select>
+			<div id="saveImageDiv">
+				<input type="button" id="exportImage" value="Export Image"></input>
+			</div>
+			<br/>Roundness:
+			<input id="tens" value="1.0" size="6"></input>
+			<input type="button" class="btnRound" value="1.0" ></input>
+			<input type="button" class="btnRound" value="0.8" ></input>
+			<input type="button" class="btnRound" value="0.6" ></input>
+			<input type="button" class="btnRound" value="0.4" ></input>
+			<input type="button" class="btnRound" value="0.2" ></input>
+			<input type="button" class="btnRound" value="0.0" ></input>
+			<br/>Number Mid Points:
+			<input type="button" class="btnNumMid" value="1" ></input>
+			<input type="button" class="btnNumMid" value="2" ></input>
+			<input type="button" class="btnNumMid" value="3" ></input>
+			<input type="button" class="btnNumMid" value="4" ></input>
+			<input type="button" class="btnNumMid" value="5" ></input>
+			<input type="button" class="btnNumMid" value="6" ></input> 
+		
+		</div>	
+    </div>
+	
+	<div id="guide" class="menu_content">
 		<img id="slide" src="/instructions/Slide1.gif" style="width:800px">
 		<img id="nextSlide" src="Next Arrow.png" data-slide="2" style="cursor:pointer">
 	</div>
-    <div>
-		<div id="container"></div>
+    
+    
+    <div id="save" class="menu_content">
+		
 		<div id="exportedImageDiv">
 			<img id="exportedImage" src="" download="stickposer.png">
 			<br/>
 			<input type="button" id="downloadImage" value="Download Image"></input>
 			Note: Open in an image program.
 		</div>
-	</div>
-    <div id="control">
-    	Select Pose: <select id="poses"></select>
-		<div id="saveImageDiv">
-			<input type="button" id="exportImage" value="Export Image"></input>
-		</div>
-    	<br/>Roundness:
-    	<input id="tens" value="1.0" size="6"></input>
-    	<input type="button" class="btnRound" value="1.0" ></input>
-    	<input type="button" class="btnRound" value="0.8" ></input>
-    	<input type="button" class="btnRound" value="0.6" ></input>
-    	<input type="button" class="btnRound" value="0.4" ></input>
-    	<input type="button" class="btnRound" value="0.2" ></input>
-    	<input type="button" class="btnRound" value="0.0" ></input>
-    	<br/>Number Mid Points:
-		<input type="button" class="btnNumMid" value="1" ></input>
-    	<input type="button" class="btnNumMid" value="2" ></input>
-    	<input type="button" class="btnNumMid" value="3" ></input>
-    	<input type="button" class="btnNumMid" value="4" ></input>
-    	<input type="button" class="btnNumMid" value="5" ></input>
-    	<input type="button" class="btnNumMid" value="6" ></input> 
-    	<br/>Get Pose File Text: 
+
+		<br/>Get Pose File Text: 
     	<input type="button" id="getFile" value="Get File"></input> 
-    	<br/><textarea id="writeFile"></textarea> 	
-    </div>
-	
-	<div>
+    	<br/><textarea id="writeFile"></textarea> 
+    	<br/>Note: Copy and Paste code into PoseFile.js.	
+    	
 		<p>
-			Resources:
+			Other Useful Resources:
 			<br/><a href="/RicksSticks.pdf" target="_blank">Rick's Sticks Instructions (pdf)</a>
 			<br/><a href="http://inkscape.org/download/" target="_blank">Download Inkscape</a></p>
 	</div>
+	
 </body>

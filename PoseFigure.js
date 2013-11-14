@@ -16,8 +16,9 @@ var PoseFigure = (function() {
 		this.getParts = function(){
 			return parts;
 		};
-				
-		this.drawAllParts = function(layerParts, layerPoints){
+		
+						
+		this.drawAllParts = function(layerParts, layerPoints, diffInMotion){
 		
 			//must draw in order, and retrieve the attachment startPoint from previous
 
@@ -42,7 +43,7 @@ var PoseFigure = (function() {
 						}
 					}
 //console.log("after k loop startPoint", startPoint || "none");					
-					parts[j].Draw(layerParts, layerPoints, startPoint);
+					parts[j].Draw(layerParts, layerPoints, startPoint, diffInMotion);
 					
 				//}else{
 					//first part has no attach 
@@ -113,12 +114,13 @@ PoseFigure.OffsetY = function() {
 //public nonprivileged methods
 PoseFigure.prototype = {
 	
-	Draw: function(layerParts, layerPoints){
+	Draw: function(layerParts, layerPoints, diffInMotion){
 	
 		layerParts.removeChildren();	
-		//layerPoints.removeChildren();	
+		//layerPoints.removeChildren();
+	
 		
-		this.drawAllParts(layerParts, layerPoints);		
+		this.drawAllParts(layerParts, layerPoints, diffInMotion);		
 		layerParts.draw();
 	},
 	

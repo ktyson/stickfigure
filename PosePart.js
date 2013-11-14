@@ -22,7 +22,8 @@ var PosePart = (function() {
 		var drawIdx;
 		var partIdx;
 		var tension;
-		var numMidPts;	
+		var numMidPts;
+		var diffInMotion;	
 
 		//privileged methods
 		
@@ -61,6 +62,12 @@ var PosePart = (function() {
 			return arrPoints;
 				
 		};
+		
+		this.clearPoints = function(layerPoint){
+//console.log(name, "this clear pts", layerPoint);		
+			layerPoint.removeChildren();
+		
+		}
 	
 		
 		this.drawPoints = function(layerPoint){
@@ -70,7 +77,7 @@ var PosePart = (function() {
 			var obj = {};
 			var point;
 			
-			layerPoint.removeChildren();
+			this.clearPoints(layerPoint);
 			
 			//startPoint
 			this.drawPoint(layerPoint, startPoint[0]*m+o,startPoint[1]*m+o, "gray");
@@ -117,7 +124,7 @@ var PosePart = (function() {
 				if(this.index > 0){
 					if(me.resetMidPoints(this.index, this.getX(), this.getY())){
 //console.log("drag redraw");	
-						me.TriggerRedraw();
+						me.TriggerRedraw(diffInMotion);
 					}
 				}
 
@@ -129,7 +136,7 @@ var PosePart = (function() {
 				if(this.index > 0){
 					if(me.resetMidPoints(this.index, this.getX(), this.getY())){
 //console.log("end drag");	
-						me.TriggerRedraw();
+						me.TriggerRedraw(diffInMotion);
 					}
 				}
 				
@@ -156,12 +163,14 @@ var PosePart = (function() {
 		}
 		
 		this.resetMidPoints = function(myIndex, myX, myY){
-		
 
-
-			var refX;
+			//new midPt
+			var refX; 
 			var refY;
 			
+			//startpoint for the changing part cannot move
+			
+			//set midPts
 			for(var i = 0; i < midPoints.length; i++){
 				//how match?
 //console.log("reset match",i,myIndex-1);				
@@ -175,12 +184,18 @@ var PosePart = (function() {
 	
 			}
 			
+			//set endpoint
+			diffInMotion = null;
 			if(myIndex != 0){
-				//must be end point
+				//must be end point, because start point is 0
 				refX = ((myX-o)/m);
 				refY = ((myY-o)/m);	
-					
+				
+				//report the diff between old x, new x, old y, new y
+				diffInMotion = [(endPoint[0]-refX),(endPoint[1]-refY)];		
+				//reset the endPoint
 				endPoint = [refX, refY];
+				
 				return true;
 			}
 			
@@ -190,11 +205,31 @@ var PosePart = (function() {
 		
 		}
 				
-		this.drawPart = function(layerPart, layerPoint, startPointFromLast){
-		
+		this.drawPart = function(layerPart, layerPoint, startPointFromLast, diffToDraw){
+			
+			//determine if points need transposing
+			if(startPointFromLast && startPoint != startPointFromLast &&
+				diffToDraw){
+				//the part has a start, is not in motion, and has a diff							
+
+//console.log(name, "got here", diffToDraw.toString());
+				//transpose the midPts
+				for(var i = 0; i < midPoints.length; i++){
+					var pt = midPoints[i];
+					pt[0] = pt[0] - diffToDraw[0];
+					pt[1] = pt[1] - diffToDraw[1];
+				}
+				//transpose the endPoint
+				endPoint[0] = endPoint[0] - diffToDraw[0];
+				endPoint[1] = endPoint[1] - diffToDraw[1];
+
+			}
+			
+			
 			if(startPointFromLast){
 				startPoint = startPointFromLast;
 			}
+			
 			
 			// touchscreen needs thicker lines to target
 			var isTouch = 'ontouchstart' in document.documentElement;
@@ -230,9 +265,12 @@ var PosePart = (function() {
 				}
 			});
 			
-			spline.on("click touchstart", function(){
+			spline.on("click touchstart", function(event){
+				
 				console.log("click", spline.index, name, drawIdx, this.index);
 				me.drawPoints(layerPoint);
+				return false;
+				
 			});
 			
 			layerPart.add(spline);	
@@ -338,12 +376,12 @@ var PosePart = (function() {
 
 //public nonprivileged methods
 PosePart.prototype = {
-	Draw: function(layerPart, layerPoint, startPointFromLast){
-		console.log("drawing " + this.getName());
-		this.drawPart(layerPart, layerPoint, startPointFromLast);
+	Draw: function(layerPart, layerPoint, startPointFromLast, diffToDraw){
+//console.log("drawing " + this.getName());
+		this.drawPart(layerPart, layerPoint, startPointFromLast, diffToDraw);
 	},	
-	TriggerRedraw: function(){		
-		RedrawFigure();
+	TriggerRedraw: function(diffInMotion){		
+		RedrawFigure(diffInMotion);
 	},	
 	TriggerPartChange: function(idx){	
 		SetActivePart(idx);
