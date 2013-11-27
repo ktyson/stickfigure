@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>StickPoser Prototype 3.1</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.5.5.min.js"></script>
+    
+    <script type="text/javascript" src="PoseController.js"></script>
+    <script type="text/javascript" src="PoseFigure.js"></script>
+    <script type="text/javascript" src="PosePart.js"></script>
+    <script type="text/javascript" src="PoseFile.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="PoseStylesheet.css">
+
+     
+<script>
+  
+var controller;
+    	
+$(document).ready(function(){
+  
+    controller = new PoseController();
+    controller.Build('controlpanel');
+
+});
+
+
+</script>       
+</head>
+<body>
+<div id='container'></div>
+<div id='controlpanel'></div>
+</body>
+</html>

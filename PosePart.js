@@ -121,6 +121,7 @@ var PosePart = (function() {
 				var container = this.parent.parent.attrs.container;
 				$(container).css("cursor", "move");
 
+				//do not move if part is the main anchor of the figure
 				if(this.index > 0){
 					if(me.resetMidPoints(this.index, this.getX(), this.getY())){
 //console.log("drag redraw");	
@@ -164,11 +165,14 @@ var PosePart = (function() {
 		
 		this.resetMidPoints = function(myIndex, myX, myY){
 
+			//one of the points of this part has moved
+			//must reset array of points
+
 			//new midPt
 			var refX; 
 			var refY;
 			
-			//startpoint for the changing part cannot move
+			//startpoint for the changing part cannot move - ignore
 			
 			//set midPts
 			for(var i = 0; i < midPoints.length; i++){
@@ -200,30 +204,35 @@ var PosePart = (function() {
 			}
 			
 //console.log("new mids", refX, refY);
-
-			
-		
+	
 		}
-				
+					
 		this.drawPart = function(layerPart, layerPoint, startPointFromLast, diffToDraw){
-			
+		
 			//determine if points need transposing
-			if(startPointFromLast && startPoint != startPointFromLast &&
-				diffToDraw){
-				//the part has a start, is not in motion, and has a diff							
+			
+			if(startPointFromLast){
+				if(diffToDraw){
+					if(PoseFigure.IsInDrawChain(drawIdx)){
+			
+						//the part has a start, is not in motion, and has a diff							
 
 //console.log(name, "got here", diffToDraw.toString());
-				//transpose the midPts
-				for(var i = 0; i < midPoints.length; i++){
-					var pt = midPoints[i];
-					pt[0] = pt[0] - diffToDraw[0];
-					pt[1] = pt[1] - diffToDraw[1];
-				}
-				//transpose the endPoint
-				endPoint[0] = endPoint[0] - diffToDraw[0];
-				endPoint[1] = endPoint[1] - diffToDraw[1];
+						//transpose the midPts
+						for(var i = 0; i < midPoints.length; i++){
+							var pt = midPoints[i];
+							pt[0] = pt[0] - diffToDraw[0];
+							pt[1] = pt[1] - diffToDraw[1];
+						}
+						//transpose the endPoint
+						endPoint[0] = endPoint[0] - diffToDraw[0];
+						endPoint[1] = endPoint[1] - diffToDraw[1];
 
+					}
+				}
 			}
+			
+
 			
 			
 			if(startPointFromLast){
@@ -267,11 +276,13 @@ var PosePart = (function() {
 			
 			spline.on("click touchstart", function(event){
 				
-				console.log("click", spline.index, name, drawIdx, this.index);
+//console.log("click", spline.index, name, drawIdx, this.index);
 				me.drawPoints(layerPoint);
 				return false;
 				
 			});
+			
+
 			
 			layerPart.add(spline);	
 			
@@ -304,6 +315,71 @@ var PosePart = (function() {
 			}
 		
 		}
+
+		this.interpolateMidPoints = function(targetNum, layerPoint){
+
+			//target should be between 1 and 7
+			if(numMidPts > 0 && numMidPts < 8){
+    			
+    			//must be different from existing numpts
+    			if(midPoints.length != targetNum){
+
+				var diff = Math.abs(midPoints.length - targetNum);
+
+				if(midPoints.length < targetNum){
+					//add points at each end
+//console.log("will add " + diff);
+					for(var i = 0; i < diff; i++){
+
+						if(i % 2 == 0){
+							//add pt to end
+							console.log("add to end",i);
+							midPoints.push(getMidPt(midPoints[midPoints.length-1], endPoint));
+						}else{
+							//add pt to start
+//console.log("add to start",i);
+							midPoints.unshift(getMidPt(startPoint, midPoints[0]));
+						}
+
+					}
+
+
+				}else{
+					//subtract points at each end
+
+//console.log("will drop " + diff);
+					for(var i = 0; i < diff; i++){
+
+						if(i % 2 == 0){
+							//subtract pt from end
+//console.log("drop from end",i);
+							midPoints.pop();
+						}else{
+							//subtract pt from start
+//console.log("drop from start",i);
+							midPoints.shift();
+						}
+
+					}
+					
+				}
+
+
+			} //same num - do nothing
+
+		} //incorrect num pts - do nothing
+		
+		
+		function getMidPt(ptA, ptB){
+			console.log(ptA,ptB);
+			console.log([(ptA[0] + (ptB[0] - ptA[0])/2),(ptA[1] + (ptB[1] - ptA[1])/2)]);
+			return [(ptA[0] + (ptB[0] - ptA[0])/2),(ptA[1] + (ptB[1] - ptA[1])/2)];
+				
+		}		
+		
+
+    }
+
 
 		
 		this.setDrawIdx = function(idx){
@@ -339,7 +415,7 @@ var PosePart = (function() {
 			
 //console.log(name,"old num", numMidPts);
 			numMidPts = val;			
-			this.insertMidPoints(numMidPts, layerPoint);			
+			this.interpolateMidPoints(numMidPts, layerPoint);			
 			this.drawPoints(layerPoint);
 			this.TriggerRedraw();
 //console.log(name,"new num", numMidPts);			
@@ -381,13 +457,14 @@ PosePart.prototype = {
 		this.drawPart(layerPart, layerPoint, startPointFromLast, diffToDraw);
 	},	
 	TriggerRedraw: function(diffInMotion){		
-		RedrawFigure(diffInMotion);
+		controller.RedrawFigure(diffInMotion);
 	},	
 	TriggerPartChange: function(idx){	
-		SetActivePart(idx);
+		controller.SetActivePart(idx);
 	},	
-	GetDrawFromLast: function(){
+	GetDrawFromLast: function(callback){
 		return this.getDrawFromLast();
+		callback();
 	},	
 	GetNextStartPoint: function(which){		
 		return this.getNextStartPoint(which);

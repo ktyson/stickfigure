@@ -6,10 +6,12 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
     <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.5.5.min.js"></script>
     
+    <script type="text/javascript" src="PoseController.js"></script>
     <script type="text/javascript" src="PoseFigure.js"></script>
     <script type="text/javascript" src="PosePart.js"></script>
     <script type="text/javascript" src="PoseFile.js"></script>
     
+    <link rel="stylesheet" type="text/css" href="PoseStylesheet.css">
 
 
 <style type="text/css">
@@ -86,8 +88,10 @@ $(document).ready(function(){
   	
     $(".menuItem").on("click", function(){
     	$(".menu_content").hide();
+    	$(".menuItem").css("color","white");
     	var showThis = $(this).attr("id").substring(5);
     	$("#" + showThis).show();
+    	$(this).css("color","yellow");
     });
         
     $("#container").on("click", function(){
@@ -127,7 +131,7 @@ $(document).ready(function(){
 				 // This forces download when navigated to
 				// var downloadUrl = dataUrl.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
 				 var downloadUrl = dataUrl.replace(/^data:image\/[^;]/, 'data:image/octet-stream');
-				 console.log(downloadUrl);
+//console.log(downloadUrl);
 				 
 				 $("#exportedImageDiv").show();
 				 $("#exportedImage").attr("src", dataUrl);
@@ -155,12 +159,15 @@ $(document).ready(function(){
 	});
 
     figure = new PoseFigure(Pose["BASE"]);
-    figure.Draw(layerParts, layerPoints);	
+    figure.Draw(layerParts, layerPoints);
+    
+    var control = new PoseController();
+    $("body").append(control.Create());
 
 });
 
-function RedrawFigure(diffInMotion){
-	figure.Draw(layerParts, layerPoints, diffInMotion);
+function RedrawFigure(diffInMotion, currentPartName){
+	figure.Draw(layerParts, layerPoints, diffInMotion, currentPartName);
 }
 
 function SetActivePart(part_idx){
@@ -179,64 +186,7 @@ function makeControls(){
 
 </script>       
 </head>
-
 <body>
-	<div id="menu">
-		<span id='menu_draw' class='menuItem'>Draw</span>
-		<span id='menu_guide' class='menuItem'>Guide</span>
-		<span id='menu_save' class='menuItem'>Save</span>
-	</div>
-	
-	<div id="draw" class="menu_content">
-		<div id="container"></div>
-		<div id="control">
-			Select Pose: <select id="poses"></select>
-			<div id="saveImageDiv">
-				<input type="button" id="exportImage" value="Export Image"></input>
-			</div>
-			<br/>Roundness:
-			<input id="tens" value="1.0" size="6"></input>
-			<input type="button" class="btnRound" value="1.0" ></input>
-			<input type="button" class="btnRound" value="0.8" ></input>
-			<input type="button" class="btnRound" value="0.6" ></input>
-			<input type="button" class="btnRound" value="0.4" ></input>
-			<input type="button" class="btnRound" value="0.2" ></input>
-			<input type="button" class="btnRound" value="0.0" ></input>
-			<br/>Number Mid Points:
-			<input type="button" class="btnNumMid" value="1" ></input>
-			<input type="button" class="btnNumMid" value="2" ></input>
-			<input type="button" class="btnNumMid" value="3" ></input>
-			<input type="button" class="btnNumMid" value="4" ></input>
-			<input type="button" class="btnNumMid" value="5" ></input>
-			<input type="button" class="btnNumMid" value="6" ></input> 
-		
-		</div>	
-    </div>
-	
-	<div id="guide" class="menu_content">
-		<img id="slide" src="/instructions/Slide1.gif" style="width:800px">
-		<img id="nextSlide" src="Next Arrow.png" data-slide="2" style="cursor:pointer">
-	</div>
-    
-    
-    <div id="save" class="menu_content">
-		
-		<div id="exportedImageDiv">
-			<img id="exportedImage" src="" download="stickposer.png">
-			<br/>
-			<input type="button" id="downloadImage" value="Download Image"></input>
-			Note: Open in an image program.
-		</div>
-
-		<br/>Get Pose File Text: 
-    	<input type="button" id="getFile" value="Get File"></input> 
-    	<br/><textarea id="writeFile"></textarea> 
-    	<br/>Note: Copy and Paste code into PoseFile.js.	
-    	
-		<p>
-			Other Useful Resources:
-			<br/><a href="/RicksSticks.pdf" target="_blank">Rick's Sticks Instructions (pdf)</a>
-			<br/><a href="http://inkscape.org/download/" target="_blank">Download Inkscape</a></p>
-	</div>
-	
+<div id='container'></div>
 </body>
+</html>
