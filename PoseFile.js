@@ -1,87 +1,61 @@
-var Pose = {};
+Pose = [
+	{
+		name: "BASE",
+		parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[3.2,1.8],"midPoints":[[3.2,2.8]],"endPoint":[3.2,3.8],"tension":0},
+		{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[3.4000000000000004,1.8],"midPoints":[[3.2,1.65]],"endPoint":[3.2,1.5],"tension":0},
+		{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[3.4000000000000004,1.5],"midPoints":[[2.6933333333333334,0.9516666666666667],[3.146666666666667,0.3633333333333334],[3.666666666666667,0.935]],"endPoint":[3.2933333333333334,1.4266666666666667],"tension":0.6},
+		{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[3.6000000000000005,1.8],"midPoints":[[4.2,1.8]],"endPoint":[5.04,2.4000000000000004],"tension":0.2},
+		{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[3.8000000000000007,1.8],"midPoints":[[2.2,1.8]],"endPoint":[1.3733333333333333,1.12],"tension":0.2},
+		{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[5.24,2.4000000000000004],"midPoints":[[5.3116666666666665,2.586666666666667],[5.503333333333333,2.3466666666666667],[5.321666666666666,2.16]],"endPoint":[5.1000000000000005,2.3066666666666666],"tension":0.4},
+		{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[1.5733333333333333,1.12],"midPoints":[[1.155,1.306666666666667],[0.8833333333333333,1.1333333333333333],[1.065,0.8400000000000001]],"endPoint":[1.3666666666666667,0.9866666666666668],"tension":0.4},
+		{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[3.4000000000000004,3.8],"midPoints":[[4.2,4.8]],"endPoint":[4.293333333333334,5.8],"tension":0.4},
+		{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[3.6000000000000005,3.8],"midPoints":[[2.2,4.8]],"endPoint":[2.146666666666667,5.84],"tension":0.6},
+		{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[4.493333333333334,5.8],"midPoints":[[4.565,5.973333333333333],[4.383333333333334,6.253333333333333],[4.055000000000001,6.1466666666666665]],"endPoint":[4.180000000000001,5.88],"tension":0.4},
+		{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[2.346666666666667,5.84],"midPoints":[[1.8616666666666668,5.8533333333333335],[1.8433333333333335,6.2],[2.211666666666667,6.2266666666666675]],"endPoint":[2.233333333333334,5.933333333333334],"tension":0.4}]
+	},
+	
+	{
+		name: "RICHARD_1",
+		parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[3,1.2],"midPoints":[[3,2.2]],"endPoint":[2.7333333333333334,3.226666666666667],"tension":0.2},
+		{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[3,1.4],"midPoints":[[3,1.05]],"endPoint":[3.013333333333333,1.0066666666666666],"tension":0},
+		{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[3.013333333333333,1.2066666666666666],"midPoints":[[2.72,0.7388888888888887],[2.8666666666666667,-0.08888888888888896],[3.013333333333333,-0.2766666666666667],[3.4266666666666667,-0.07777777777777789],[3.4266666666666667,0.6944444444444442]],"endPoint":[3.04,1],"tension":0.4},
+		{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[3,1.5999999999999999],"midPoints":[[3.8133333333333335,2.4000000000000004]],"endPoint":[3.066666666666667,3.7733333333333334],"tension":0},
+		{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[3,1.7999999999999998],"midPoints":[[2.4,1.804444444444444],[1.68,2.4355555555555557]],"endPoint":[2.48,3.5333333333333337],"tension":0.2},
+		{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[3.066666666666667,3.9733333333333336],"midPoints":[[3.3480000000000003,3.781333333333334],[3.6560000000000006,3.856],[3.630666666666667,4.117333333333334],[3.272,4.085333333333333]],"endPoint":[3.0733333333333333,3.826666666666666],"tension":0.4},
+		{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[2.48,3.733333333333334],"midPoints":[[2.006666666666667,3.5520000000000005],[1.8266666666666667,3.690666666666667],[1.9533333333333334,3.8426666666666667],[2.2133333333333334,3.821333333333334]],"endPoint":[2.46,3.68],"tension":0.6},
+		{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[2.7333333333333334,3.426666666666667],"midPoints":[[3,4.1466666666666665],[3.0533333333333332,4.866666666666667],[3.1333333333333333,5.613333333333333]],"endPoint":[2.973333333333333,6.386666666666667],"tension":0.4},
+		{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[2.7333333333333334,3.6266666666666674],"midPoints":[[2.1866666666666665,4.666666666666667]],"endPoint":[2.28,6.306666666666667],"tension":0},
+		{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[2.973333333333333,6.586666666666667],"midPoints":[[3.3277777777777775,6.337777777777777],[3.762222222222222,6.342222222222223],[3.9833333333333325,6.586666666666667],[3.6444444444444444,6.764444444444444],[2.878888888888888,6.635555555555555]],"endPoint":[2.98,6.4],"tension":0.4},
+		{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[2.28,6.506666666666667],"midPoints":[[1.9699999999999998,6.315555555555556],[1.553333333333333,6.404444444444444],[1.4699999999999995,6.653333333333333],[1.9066666666666667,6.742222222222224],[2.5566666666666666,6.564444444444445]],"endPoint":[2.433333333333333,6.32],"tension":0.4}]
+	},
 
+	{
+		name: "RICHARD_2",
+		parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[3,2],"midPoints":[[3.16,2.34],[3.1466666666666665,2.8933333333333335],[2.7866666666666666,4.233333333333333]],"endPoint":[2.6,4.426666666666667],"tension":0.4},
+		{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[3,3],"midPoints":[[2.933333333333333,1.8366666666666667]],"endPoint":[2.88,1.6733333333333333],"tension":0},
+		{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[2.88,2.6733333333333333],"midPoints":[[2.38,1.5122222222222221],[2.0533333333333332,0.9644444444444445],[2.22,0.4700000000000001],[2.7866666666666666,0.5622222222222223],[3.0733333333333333,1.2411111111111113]],"endPoint":[2.8666666666666667,1.6800000000000002],"tension":0.4},
+		{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[3,4],"midPoints":[[3.84,2.0666666666666664],[4.466666666666667,1.9466666666666668],[4.32,1.8666666666666667],[4.08,1.0666666666666667]],"endPoint":[3.96,0.8],"tension":0.2},
+		{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[3,5],"midPoints":[[3.12,2.1733333333333333],[2.453333333333333,2.16],[1.4933333333333334,1.92],[1.3066666666666666,1.92],[0.5466666666666666,0.9733333333333334]],"endPoint":[0.32,0.7066666666666667],"tension":0.2},
+		{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[3.96,1.8],"midPoints":[[3.694666666666667,0.6719999999999999],[3.789333333333333,0.3973333333333332],[4.204,0.44266666666666665],[4.2586666666666675,0.7146666666666667]],"endPoint":[4.006666666666667,0.7866666666666666],"tension":0.4},
+		{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[0.32,1.7066666666666666],"midPoints":[[-0.09833333333333333,0.8200000000000001],[-0.14333333333333334,0.48],[0.225,0.4066666666666666]],"endPoint":[0.35333333333333333,0.6933333333333334],"tension":0.4},
+		{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[2.6,5.426666666666667],"midPoints":[[4.76,3.5866666666666664]],"endPoint":[4.506666666666668,4.96],"tension":0},
+		{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[2.6,6.426666666666667],"midPoints":[[4.426666666666668,4.1066666666666665]],"endPoint":[3.466666666666667,5.986666666666666],"tension":0},
+		{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[4.506666666666668,5.96],"midPoints":[[4.976666666666667,4.640000000000001],[5.3933333333333335,4.6],[5.236666666666668,4.933333333333333],[4.786666666666667,5.253333333333333],[4.376666666666666,5.213333333333333]],"endPoint":[4.5,4.933333333333334],"tension":0.4},
+		{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[3.466666666666667,6.986666666666666],"midPoints":[[3.9677777777777776,5.682222222222221],[4.322222222222222,5.737777777777778],[3.93,6.153333333333334],[3.4844444444444442,6.435555555555556],[3.1855555555555557,6.304444444444445]],"endPoint":[3.3533333333333335,6.026666666666666],"tension":0.4}]
+	},
 
-Pose["BASE"] = {
-name: "BASE",
-parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[3,1],"midPoints":[[3,2]],"endPoint":[3,3],"tension":0},
-{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[3,1],"midPoints":[[3,0.85]],"endPoint":[3,0.7],"tension":0},
-{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[3,0.7],"midPoints":[[2.493333333333333,0.15166666666666667],[2.9466666666666668,-0.43666666666666665],[3.466666666666667,0.135]],"endPoint":[3.0933333333333333,0.6266666666666667],"numMidPoints":3,"tension":0.6},
-{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[3,1],"midPoints":[[4,1]],"endPoint":[4.84,1.6],"tension":0.2},
-{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[3,1],"midPoints":[[2,1]],"endPoint":[1.1733333333333333,0.32],"tension":0.2},
-{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[4.84,1.6],"midPoints":[[5.111666666666666,1.7866666666666668],[5.303333333333333,1.5466666666666666],[5.121666666666666,1.36]],"endPoint":[4.9,1.5066666666666666],"numMidPoints":3,"tension":0.4},
-{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[1.1733333333333333,0.32],"midPoints":[[0.9550000000000001,0.5066666666666672],[0.6833333333333333,0.33333333333333326],[0.865,0.03999999999999998]],"endPoint":[1.1666666666666667,0.1866666666666667],"numMidPoints":3,"tension":0.4},
-{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[3,3],"midPoints":[[4,4]],"endPoint":[4.093333333333334,5],"tension":0.4},
-{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[3,3],"midPoints":[[2,4]],"endPoint":[1.9466666666666668,5.04],"tension":0.6},
-{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[4.093333333333334,5],"midPoints":[[4.365,5.173333333333333],[4.183333333333334,5.453333333333333],[3.8550000000000004,5.346666666666667]],"endPoint":[3.9800000000000004,5.08],"numMidPoints":3,"tension":0.4},
-{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[1.9466666666666668,5.04],"midPoints":[[1.6616666666666668,5.053333333333334],[1.6433333333333335,5.4],[2.0116666666666667,5.426666666666668]],"endPoint":[2.0333333333333337,5.133333333333334],"numMidPoints":3,"tension":0.4}]};
-
-
-Pose["OLD_BASE"] = {
-name: "OLD_BASE",
-parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[3,1],"midPoints":[[3,2]],"endPoint":[3,3],"tension":0},
-{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[3,1],"midPoints":[[3,0.85]],"endPoint":[3,0.7],"tension":0},
-{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[3,0.7],"midPoints":[[3,0.35]],"endPoint":[3,0],"tension":0},
-{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[3,1],"midPoints":[[4,1]],"endPoint":[5,1],"tension":0},
-{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[3,1],"midPoints":[[2,1]],"endPoint":[1,1],"tension":0},
-{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[5,1],"midPoints":[[5.25,1]],"endPoint":[5.5,1],"tension":0},
-{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[1,1],"midPoints":[[0.75,1]],"endPoint":[0.5,1],"tension":0},
-{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[3,3],"midPoints":[[4,4]],"endPoint":[5,5],"tension":0},
-{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[3,3],"midPoints":[[2,4]],"endPoint":[1,5],"tension":0},
-{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[5,5],"midPoints":[[5.25,5]],"endPoint":[5.5,5],"tension":0},
-{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[1,5],"midPoints":[[0.75,5]],"endPoint":[0.5,5],"tension":0}]};
-
-Pose["TEST"] = {
-name: "TEST",
-parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[3,1],"midPoints":[[2.36,2]],"endPoint":[3,3],"tension":0},
-{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[3,1],"midPoints":[[3,0.85]],"endPoint":[3,0.7],"tension":0},
-{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[3,0.7],"midPoints":[[2.56,0.35]],"endPoint":[3.12,0.08],"tension":0},
-{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[3,1],"midPoints":[[3.9466666666666668,0.6533333333333333]],"endPoint":[5,1],"tension":0},
-{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[3,1],"midPoints":[[2,1.36]],"endPoint":[1,1],"tension":0},
-{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[5,1],"midPoints":[[5.25,1]],"endPoint":[5.5,1],"tension":0},
-{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[1,1],"midPoints":[[0.75,1]],"endPoint":[0.66,0.7333333333333333],"tension":0},
-{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[3,3],"midPoints":[[4.493333333333333,3.546666666666667]],"endPoint":[5,5],"tension":0},
-{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[3,3],"midPoints":[[2.9466666666666668,4.466666666666667]],"endPoint":[1,5],"tension":0},
-{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[5,5],"midPoints":[[5.25,5]],"endPoint":[5.5,5],"tension":0},
-{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[1,5],"midPoints":[[0.75,5]],"endPoint":[0.5,5],"tension":0}]};
-
-Pose["RICHARD_1"] = {
-name: "RICHARD_1",
-parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[3,1],"midPoints":[[3,2]],"endPoint":[2.7333333333333334,3.026666666666667],"tension":0.2},
-{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[3,1],"midPoints":[[3,0.85]],"endPoint":[3.013333333333333,0.8066666666666666],"tension":0},
-{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[3.013333333333333,0.8066666666666666],"midPoints":[[2.72,0.5388888888888888],[2.8666666666666667,-0.288888888888889],[3.013333333333333,-0.47666666666666674],[3.4266666666666667,-0.2777777777777779],[3.4266666666666667,0.4944444444444442]],"endPoint":[3.04,0.8],"numMidPoints":5,"tension":0.4},
-{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[3,1],"midPoints":[[3.8133333333333335,2.2]],"endPoint":[3.066666666666667,3.5733333333333333],"tension":0},
-{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[3,1],"midPoints":[[2.4,1.6044444444444441],[1.68,2.2355555555555555]],"endPoint":[2.48,3.3333333333333335],"numMidPoints":2,"tension":0.2},
-{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[3.066666666666667,3.5733333333333333],"midPoints":[[3.3480000000000003,3.5813333333333337],[3.6560000000000006,3.6559999999999997],[3.630666666666667,3.9173333333333336],[3.272,3.885333333333333]],"endPoint":[3.0733333333333333,3.626666666666666],"numMidPoints":4,"tension":0.4},
-{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[2.48,3.3333333333333335],"midPoints":[[2.006666666666667,3.3520000000000003],[1.8266666666666667,3.490666666666667],[1.9533333333333334,3.6426666666666665],[2.2133333333333334,3.6213333333333337]],"endPoint":[2.46,3.48],"numMidPoints":4,"tension":0.6},
-{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[2.7333333333333334,3.026666666666667],"midPoints":[[3,3.9466666666666668],[3.0533333333333332,4.666666666666667],[3.1333333333333333,5.413333333333333]],"endPoint":[2.973333333333333,6.1866666666666665],"numMidPoints":3,"tension":0.4},
-{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[2.7333333333333334,3.026666666666667],"midPoints":[[2.1866666666666665,4.466666666666667]],"endPoint":[2.28,6.1066666666666665],"tension":0},
-{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[2.973333333333333,6.1866666666666665],"midPoints":[[3.3277777777777775,6.137777777777777],[3.762222222222222,6.142222222222223],[3.9833333333333325,6.386666666666667],[3.6444444444444444,6.564444444444444],[2.878888888888888,6.435555555555555]],"endPoint":[2.98,6.2],"numMidPoints":5,"tension":0.4},
-{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[2.28,6.1066666666666665],"midPoints":[[1.9699999999999998,6.115555555555556],[1.553333333333333,6.2044444444444435],[1.4699999999999995,6.453333333333333],[1.9066666666666667,6.5422222222222235],[2.5566666666666666,6.364444444444445]],"endPoint":[2.433333333333333,6.12],"numMidPoints":5,"tension":0.4}]};
-
-Pose["RICHARD_2"] = {
-name: "RICHARD_2",
-parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[3,1],"midPoints":[[3.16,1.34],[3.1466666666666665,1.8933333333333333],[2.7866666666666666,3.2333333333333334]],"endPoint":[2.6,3.4266666666666667],"numMidPoints":3,"tension":0.4},
-{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[3,1],"midPoints":[[2.933333333333333,0.8366666666666667]],"endPoint":[2.88,0.6733333333333333],"tension":0},
-{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[2.88,0.6733333333333333],"midPoints":[[2.38,0.5122222222222221],[2.0533333333333332,-0.03555555555555543],[2.22,-0.5299999999999999],[2.7866666666666666,-0.4377777777777777],[3.0733333333333333,0.24111111111111125]],"endPoint":[2.8666666666666667,0.68],"numMidPoints":5,"tension":0.4},
-{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[3,1],"midPoints":[[3.84,1.0666666666666667],[4.466666666666667,0.9466666666666667],[4.32,0.8666666666666667],[4.08,0.06666666666666667]],"endPoint":[3.96,-0.2],"numMidPoints":4,"tension":0.2},
-{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[3,1],"midPoints":[[3.12,1.1733333333333333],[2.453333333333333,1.16],[1.4933333333333334,0.92],[1.3066666666666666,0.92],[0.5466666666666666,-0.02666666666666667]],"endPoint":[0.32,-0.29333333333333333],"numMidPoints":5,"tension":0.2},
-{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[3.96,-0.2],"midPoints":[[3.694666666666667,-0.3280000000000001],[3.789333333333333,-0.6026666666666668],[4.204,-0.5573333333333333],[4.2586666666666675,-0.2853333333333333]],"endPoint":[4.006666666666667,-0.21333333333333335],"numMidPoints":4,"tension":0.4},
-{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[0.32,-0.29333333333333333],"midPoints":[[-0.09833333333333333,-0.18],[-0.14333333333333334,-0.52],[0.225,-0.5933333333333334]],"endPoint":[0.35333333333333333,-0.30666666666666664],"numMidPoints":3,"tension":0.4},
-{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[2.6,3.4266666666666667],"midPoints":[[4.76,2.5866666666666664]],"endPoint":[4.506666666666668,3.96],"tension":0},
-{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[2.6,3.4266666666666667],"midPoints":[[4.426666666666668,3.1066666666666665]],"endPoint":[3.466666666666667,4.986666666666666],"tension":0},
-{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[4.506666666666668,3.96],"midPoints":[[4.976666666666667,3.64],[5.3933333333333335,3.6],[5.236666666666668,3.9333333333333327],[4.786666666666667,4.253333333333333],[4.376666666666666,4.213333333333333]],"endPoint":[4.5,3.933333333333333],"numMidPoints":5,"tension":0.4},
-{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[3.466666666666667,4.986666666666666],"midPoints":[[3.9677777777777776,4.682222222222221],[4.322222222222222,4.737777777777778],[3.93,5.153333333333334],[3.4844444444444442,5.435555555555556],[3.1855555555555557,5.304444444444445]],"endPoint":[3.3533333333333335,5.026666666666666],"numMidPoints":5,"tension":0.4}]};
-
-Pose["TEST3"] = {
-name: "TEST3",
-parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[4,2],"midPoints":[[2.8,1.7333333333333334]],"endPoint":[1.2666666666666666,1.8133333333333332],"tension":0},
-{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[4,2],"midPoints":[[4.093333333333334,1.73]],"endPoint":[4.266666666666667,1.4066666666666667],"tension":0},
-{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[4.266666666666667,1.4066666666666667],"midPoints":[[3.76,0.8583333333333334],[4.213333333333333,0.27000000000000013],[4.733333333333336,0.8416666666666668]],"endPoint":[4.360000000000001,1.3333333333333335],"tension":0.6},
-{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[4,2],"midPoints":[[5.066666666666666,2.7066666666666666]],"endPoint":[5.373333333333333,3.9466666666666668],"tension":0.2},
-{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[4,2],"midPoints":[[4.173333333333333,3.16]],"endPoint":[4.093333333333334,3.973333333333333],"tension":0.2},
-{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[5.373333333333333,3.9466666666666668],"midPoints":[[5.645000000000001,4.133333333333335],[5.836666666666668,3.8933333333333335],[5.655000000000001,3.706666666666667]],"endPoint":[5.433333333333334,3.853333333333333],"tension":0.4},
-{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[4.093333333333334,3.973333333333333],"midPoints":[[3.875,4.160000000000002],[3.6033333333333335,3.9866666666666664],[3.785,3.6933333333333334]],"endPoint":[4.086666666666667,3.84],"tension":0.4},
-{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[1.2666666666666666,1.8133333333333332],"midPoints":[[2.2666666666666657,2.813333333333334]],"endPoint":[2.3599999999999994,3.8133333333333312],"tension":0.4},
-{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[1.2666666666666666,1.8133333333333332],"midPoints":[[0.2666666666666666,2.813333333333334]],"endPoint":[0.21333333333333337,3.8533333333333313],"tension":0.6},
-{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[2.3599999999999994,3.8133333333333312],"midPoints":[[2.631666666666666,3.9866666666666633],[2.4499999999999993,4.266666666666662],[2.121666666666666,4.159999999999997]],"endPoint":[2.246666666666666,3.8933333333333304],"tension":0.4},
-{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[0.21333333333333337,3.8533333333333313],"midPoints":[[-0.07166666666666655,3.866666666666665],[-0.08999999999999986,4.213333333333329],[0.2783333333333333,4.239999999999997]],"endPoint":[0.30000000000000027,3.946666666666666],"tension":0.4}]};
+	{
+		name: "Creature",
+		parts: [{"drawOrder":0,"drawFromLast":{"part":null,"site":null},"name":"torso","startPoint":[4,2.4],"midPoints":[[3.7,2.3333333333333335],[3.4,2.2666666666666666],[2.8,2.1333333333333333],[2.033333333333333,2.1733333333333333],[0.9433333333333334,2.046666666666667],[-0.10166666666666667,1.6166666666666667]],"endPoint":[1.5866666666666667,2.2133333333333334],"tension":0},
+		{"drawOrder":1,"drawFromLast":{"part":"torso","site":"start"},"name":"neck","startPoint":[4,2.8],"midPoints":[[4.8,2.0633333333333335]],"endPoint":[5.573333333333333,1.7400000000000002],"tension":1},
+		{"drawOrder":2,"drawFromLast":{"part":"neck","site":"end"},"name":"head","startPoint":[5.573333333333333,2.14],"midPoints":[[4.8133333333333335,1.1916666666666667],[5.826666666666666,0.9900000000000002],[5.693333333333337,1.7083333333333335]],"endPoint":[6.840000000000002,1.7333333333333338],"tension":0.6},
+		{"drawOrder":3,"drawFromLast":{"part":"torso","site":"start"},"name":"left_arm","startPoint":[4,3.1999999999999997],"midPoints":[[5.066666666666666,3.1066666666666665]],"endPoint":[5.586666666666667,4.386666666666667],"tension":0.2},
+		{"drawOrder":4,"drawFromLast":{"part":"torso","site":"start"},"name":"right_arm","startPoint":[4,3.5999999999999996],"midPoints":[[4.173333333333333,3.56]],"endPoint":[4.36,4.5200000000000005],"tension":0.2},
+		{"drawOrder":5,"drawFromLast":{"part":"left_arm","site":"end"},"name":"left_hand","startPoint":[5.586666666666667,4.786666666666667],"midPoints":[[5.858333333333335,4.573333333333336],[6.050000000000002,4.333333333333334],[5.868333333333335,4.146666666666667]],"endPoint":[5.646666666666667,4.293333333333333],"tension":0.4},
+		{"drawOrder":6,"drawFromLast":{"part":"right_arm","site":"end"},"name":"right_hand","startPoint":[4.36,4.920000000000001],"midPoints":[[4.141666666666667,4.70666666666667],[3.87,4.533333333333334],[4.051666666666667,4.24]],"endPoint":[4.3533333333333335,4.386666666666667],"tension":0.4},
+		{"drawOrder":7,"drawFromLast":{"part":"torso","site":"end"},"name":"left_leg","startPoint":[1.5866666666666667,2.6133333333333333],"midPoints":[[2.586666666666668,3.213333333333335]],"endPoint":[2.306666666666668,4.200000000000003],"tension":0.4},
+		{"drawOrder":8,"drawFromLast":{"part":"torso","site":"end"},"name":"right_leg","startPoint":[1.5866666666666667,3.013333333333333],"midPoints":[[0.5866666666666667,3.213333333333335],[0.56,3.733333333333334],[0.5466666666666667,3.9933333333333345],[0.54,4.123333333333336],[0.5366666666666667,4.188333333333338]],"endPoint":[0.5333333333333334,4.253333333333336],"tension":0.6},
+		{"drawOrder":9,"drawFromLast":{"part":"left_leg","site":"end"},"name":"left_foot","startPoint":[2.306666666666668,4.600000000000003],"midPoints":[[2.5783333333333345,4.373333333333335],[2.396666666666668,4.653333333333332],[2.068333333333334,4.546666666666667]],"endPoint":[2.1933333333333347,4.280000000000002],"tension":0.4},
+		{"drawOrder":10,"drawFromLast":{"part":"right_leg","site":"end"},"name":"right_foot","startPoint":[0.5333333333333334,4.653333333333336],"midPoints":[[0.24833333333333352,4.266666666666671],[0.2300000000000002,4.613333333333334],[0.5983333333333334,4.6400000000000015]],"endPoint":[0.6200000000000003,4.346666666666671],"tension":0.4}]
+	}
+];
