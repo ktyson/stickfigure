@@ -425,7 +425,7 @@ PosePart.prototype = {
 	
 	GetDrawFromLast: function(callback) {
 		return this.getDrawFromLast();
-		callback();
+		//callback();
 	},
 	
 	GetNextStartPoint: function(which) {		
