@@ -27,10 +27,15 @@ console.log("ok", uri, filename, pathkey);
 	  }
 	  	  
       if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+      
+      var contentType = 'text/plain';
+      if (request.url.indexOf('.css') != -1) {
+        contentType = 'text/css';
+      }
 
       fs.readFile(filename, "binary", function(err, file) {
         if(err) {        
-          response.writeHead(500, {"Content-Type": "text/plain"});
+          response.writeHead(500, {"Content-Type": contentType});
           response.write(err + "\n");
           response.end();
           return;
