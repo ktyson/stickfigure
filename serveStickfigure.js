@@ -26,8 +26,8 @@ console.log("ok", uri, filename, pathkey);
 		return;
 	  }
 	  	  
-      if (fs.statSync(filename).isDirectory()) filename += '/index.html';
-      
+      if (fs.statSync(filename).isDirectory()) filename += 'index.html';
+console.log('file: ' + filename);     
       var contentType = 'text/plain';
       if (request.url.indexOf('.css') != -1) {
         contentType = 'text/css';
